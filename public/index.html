@@ -289,7 +289,7 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
 }
 
 .left-page {
-    width: 65%; 
+    width: 70%; 
     border-right: 2px solid #d4c3a3;
     background:#fffaf0;
 }
@@ -857,7 +857,7 @@ document.getElementById("translatedPage").innerHTML = `
         mago
         <span class="note">Mga taong marurunong; partikular ang Tatlong Hari na nag-alay ng regalo kay Hesus (Magi).</span>
     </span> 
-    ay nagdala ng mahahalagang regalo, pero hindi iyon kabilang doon. Ipapaliwanag ko ang aking ibig mean sa lalong madaling panahon.</p>
+    ay nagdala ng mahahalagang regalo, pero hindi iyon kabilang doon. Ipapaliwanag ko ang aking ibig sabihin sa lalong madaling panahon.</p>
 <div style="text-align: center; margin: 20px 0;">
     <img src="hug.png" alt="hug" width="500">
 </div>
@@ -869,7 +869,7 @@ document.getElementById("translatedPage").innerHTML = `
 </div>
 <p>Binuksan ng mga puting daliri ang papel. At pagkatapos ay isang sigaw ng galak; at pagkatapos ay pagbabago sa luha.</p>
 
-<p>Dahil naroon ang mga Suhol—ang mga
+<p>Dahil naroon ang mga Suklay—ang mga
     <span class="annotation" tabindex="0">
         suklay
         <span class="note">Isang kasangkapan na may mga ngipin na ginagamit sa pag-aayos o pagpapakapit ng buhok (combs).</span>
@@ -1221,9 +1221,9 @@ showOriginal();
 </script>
 <script>
 (function () {
-    // Core Web Audio API contexts for system-level memory playback
-    let audioContext = null;
-    let currentAudioSource = null;
+
+    const synthesis = window.speechSynthesis;
+    let utterance = null;
     let isSpeaking = false;
 
     const speakBtn = document.getElementById("speakBtn");
@@ -1232,124 +1232,168 @@ showOriginal();
     function extractText(element) {
         if (!element) return "";
         const clone = element.cloneNode(true);
+
         clone.querySelectorAll("img").forEach(el => el.remove());
         clone.querySelectorAll(".note").forEach(el => el.remove());
+
         return clone.innerText || clone.textContent || "";
     }
 
     function getCurrentStoryText() {
+
         const originalPage = document.getElementById("originalPage");
         const translatedPage = document.getElementById("translatedPage");
+
         if (!originalPage || !translatedPage) return "";
 
-        const originalVisible = originalPage.offsetParent !== null && getComputedStyle(originalPage).display !== "none";
-        const translatedVisible = translatedPage.offsetParent !== null && getComputedStyle(translatedPage).display !== "none";
+        const originalVisible =
+            originalPage.offsetParent !== null &&
+            getComputedStyle(originalPage).display !== "none";
 
-        if (translatedVisible && !originalVisible) return extractText(translatedPage);
-        if (originalVisible && !translatedVisible) return extractText(originalPage);
+        const translatedVisible =
+            translatedPage.offsetParent !== null &&
+            getComputedStyle(translatedPage).display !== "none";
 
-        const isTranslatedActive = translatedPage.classList.contains("active") || 
-                                   translatedPage.classList.contains("show") || 
-                                   translatedPage.classList.contains("visible");
+        if (translatedVisible && !originalVisible)
+            return extractText(translatedPage);
 
-        return isTranslatedActive ? extractText(translatedPage) : extractText(originalPage);
+        if (originalVisible && !translatedVisible)
+            return extractText(originalPage);
+
+        const isTranslatedActive =
+            translatedPage.classList.contains("active") ||
+            translatedPage.classList.contains("show") ||
+            translatedPage.classList.contains("visible");
+
+        return isTranslatedActive
+            ? extractText(translatedPage)
+            : extractText(originalPage);
     }
 
-    // Safely kills any active background memory sound processing arrays
-    function stopPlayback() {
-        if (currentAudioSource) {
-            try { currentAudioSource.stop(); } catch(e){}
-            currentAudioSource.disconnect();
-            currentAudioSource = null;
+    // 🎧 Get BEST available FEMALE voice (Chrome/Edge safe)
+    function getBestFemaleVoice(voices, langHint) {
+
+        const femaleKeywords = [
+            "female", "zira", "aria", "jenny", "samantha",
+            "google uk english female",
+            "google us english female",
+            "hazel"
+        ];
+
+        // 1. Strong match (female + correct language)
+        let voice = voices.find(v =>
+            v.lang.toLowerCase().includes(langHint) &&
+            femaleKeywords.some(k => v.name.toLowerCase().includes(k))
+        );
+
+        // 2. Any female voice in correct language
+        if (!voice) {
+            voice = voices.find(v =>
+                v.lang.toLowerCase().includes(langHint) &&
+                femaleKeywords.some(k => v.name.toLowerCase().includes(k))
+            );
         }
-        resetButton();
+
+        // 3. Any female voice at all
+        if (!voice) {
+            voice = voices.find(v =>
+                femaleKeywords.some(k => v.name.toLowerCase().includes(k))
+            );
+        }
+
+        // 4. Fallback to any voice in language
+        if (!voice) {
+            voice = voices.find(v =>
+                v.lang.toLowerCase().includes(langHint)
+            );
+        }
+
+        return voice;
     }
 
-    speakBtn.addEventListener("click", async function () {
+    speakBtn.addEventListener("click", function () {
+
         if (isSpeaking) {
-            stopPlayback();
+            synthesis.cancel();
+            speakBtn.textContent = "🔊 Listen";
+            isSpeaking = false;
             return;
         }
 
         const fullText = getCurrentStoryText().trim();
+
         if (!fullText) {
             alert("No story text found.");
             return;
         }
 
-        speakBtn.textContent = "⏳ Loading AI Voice...";
-        speakBtn.disabled = true;
+        utterance = new SpeechSynthesisUtterance(fullText);
 
-        const tagalogKeywords = ["ang","mga","ng","sa","ni","kuwento","bata","relo","buhok","salin"];
+        utterance.rate = 0.92;
+        utterance.pitch = 1.0;
+        utterance.volume = 1.0;
+
+        const tagalogKeywords = [
+            "ang","mga","ng","sa","ni","kuwento",
+            "bata","relo","buhok","salin","jim","della"
+        ];
+
         const words = fullText.toLowerCase().split(/\W+/);
-        const isTagalog = words.some(word => tagalogKeywords.includes(word));
-        const detectedLang = isTagalog ? "fil-PH" : "en-US";
+        const isTagalog = words.some(w => tagalogKeywords.includes(w));
 
-        try {
-            const response = await fetch('/api/voice', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ text: fullText, language: detectedLang })
-            });
+        const voices = synthesis.getVoices();
 
-            if (!response.ok) {
-                const errData = await response.json().catch(() => ({}));
-                throw new Error(errData.error || "Gemini speech generation failed.");
-            }
+        if (isTagalog) {
+            utterance.lang = "fil-PH";
 
-            // 1. Download response data directly as an arrayBuffer container
-            const arrayBuffer = await response.arrayBuffer();
+            const voice = getBestFemaleVoice(voices, "fil") ||
+                          getBestFemaleVoice(voices, "tl");
 
-            // 2. Initialize Browser Web Audio Engine on explicit user gesture
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            }
+            if (voice) utterance.voice = voice;
 
-            // 3. Decode Gemini data architecture into raw system sound waves
-            audioContext.decodeAudioData(arrayBuffer, function(audioBufferData) {
-                // Disconnect old audio paths if child clicks twice rapidly
-                if (currentAudioSource) currentAudioSource.disconnect();
+        } else {
+            utterance.lang = "en-US";
 
-                currentAudioSource = audioContext.createBufferSource();
-                currentAudioSource.buffer = audioBufferData;
-                currentAudioSource.connect(audioContext.destination);
+            const voice = getBestFemaleVoice(voices, "en");
 
-                // Tracking playback complete states cleanly
-                currentAudioSource.onended = () => {
-                    // Only reset if this context path is still actively speaking
-                    if (isSpeaking) resetButton();
-                };
-
-                // Trigger audio execution
-                currentAudioSource.start(0);
-                isSpeaking = true;
-                speakBtn.disabled = false;
-                speakBtn.textContent = "⏹️ Stop";
-
-            }, function(decodeError) {
-                console.error("Decoding audio signature failed:", decodeError);
-                throw new Error("Could not parse the voice data stream format.");
-            });
-
-        } catch (err) {
-            console.error(err);
-            alert(err.message || "Could not execute audio playback.");
-            resetButton();
+            if (voice) utterance.voice = voice;
         }
-    });
 
-    function resetButton() {
-        isSpeaking = false;
-        speakBtn.disabled = false;
-        speakBtn.textContent = "🔊 Listen";
-    }
+        utterance.onstart = () => {
+            isSpeaking = true;
+            speakBtn.textContent = "⏹️ Stop";
+        };
+
+        utterance.onend = () => {
+            isSpeaking = false;
+            speakBtn.textContent = "🔊 Listen";
+        };
+
+        utterance.onerror = () => {
+            isSpeaking = false;
+            speakBtn.textContent = "🔊 Listen";
+        };
+
+        synthesis.cancel();
+        synthesis.speak(utterance);
+    });
 
     const closeBtn = document.querySelector(".close-btn");
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
-            stopPlayback();
+            synthesis.cancel();
+            isSpeaking = false;
+            speakBtn.textContent = "🔊 Listen";
         });
     }
+
+    // Load voices properly (Chrome fix)
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = () => {
+            synthesis.getVoices();
+        };
+    }
+
 })();
 </script>
 </body>
