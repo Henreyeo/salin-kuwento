@@ -1,5 +1,5 @@
 export const config = {
-  runtime: "edge", // ⚡ faster than serverless (important for Vercel timeout issues)
+  runtime: "edge", // fastest runtime on Vercel
 };
 
 export default async function handler(req) {
@@ -8,52 +8,38 @@ export default async function handler(req) {
 
     if (!text || typeof text !== "string") {
       return new Response(
-        JSON.stringify({ error: "Invalid text input" }),
-        { status: 400, headers: { "Content-Type": "application/json" } }
+        JSON.stringify({ error: "Invalid or missing text" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
       );
     }
 
-    // Trim text to prevent long TTS overload (critical for speed)
-    const safeText = text.slice(0, 3000);
+    // Optional safety limit (prevents huge payloads)
+    const safeText = text.slice(0, 5000);
 
-    // Call OpenAI TTS (fast model: tts-1)
-    const ttsResponse = await fetch("https://api.openai.com/v1/audio/speech", {
-      method: "POST",
-      headers: {
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: "tts-1", // ⚡ fastest TTS model
-        voice: "alloy", // fast neutral voice
-        input: safeText,
-        format: "mp3",
+    // We do NOT generate audio here anymore
+    // We only pass text back to frontend for instant TTS
+    return new Response(
+      JSON.stringify({
+        success: true,
+        text: safeText,
       }),
-    });
+      {
+        status: 200,
+        headers: {
+          "Content-Type": "application/json",
+          "Cache-Control": "no-store",
+        },
+      }
+    );
 
-    if (!ttsResponse.ok) {
-      const errText = await ttsResponse.text();
-      return new Response(
-        JSON.stringify({ error: "TTS failed", details: errText }),
-        { status: 500, headers: { "Content-Type": "application/json" } }
-      );
-    }
-
-    // Stream audio directly back to browser (no buffering)
-    const audioStream = ttsResponse.body;
-
-    return new Response(audioStream, {
-      headers: {
-        "Content-Type": "audio/mpeg",
-        "Cache-Control": "no-store",
-      },
-    });
-
-  } catch (error) {
+  } catch (err) {
     return new Response(
       JSON.stringify({
         error: "Server error",
-        message: error.message,
+        message: err.message,
       }),
       {
         status: 500,
