@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Salin Kuwento</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Libre+Baskerville&display=swap" rel="stylesheet">
+
+<style>
+
+html{
+    scroll-behavior:smooth;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Libre Baskerville', serif;
+
+background-image:
+linear-gradient(rgba(0,0,0,0.20), rgba(0,0,0,0.20)),
+url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e6f0426d.jpg');
+
+    background-size:cover;
+    background-position:center;
+    background-attachment:fixed;
+    background-repeat:no-repeat;
+
+    overflow-x:hidden;
+    min-height:100vh;
+}
+
+/* TABLE */
+.table{
+    min-height:100vh;
+    padding:50px;
+}
+
+/* TITLE */
+.title{
+    text-align:center;
+    color:white;
+    font-size:4rem;
+    margin-bottom:15px;
+    font-family:'Cinzel', serif;
+    text-shadow:3px 3px 15px rgba(0,0,0,0.8);
+    animation:fadeDown 1s ease;
+}
+
+/* LOGO ANIMATION */
+.title img{
+    display:block;
+    margin:0 auto;
+    max-width:420px;
+    width:80%;
+    height:auto;
+
+    animation:
+    logoFloat 4s ease-in-out infinite,
+    logoGlow 3s ease-in-out infinite;
+
+    filter:drop-shadow(0 0 15px rgba(255,255,255,0.25));
+
+    transition:0.4s;
+}
+
+/* FLOATING EFFECT */
+@keyframes logoFloat{
+    0%{
+        transform:translateY(0px) scale(1);
+    }
+
+    50%{
+        transform:translateY(-10px) scale(1.02);
+    }
+
+    100%{
+        transform:translateY(0px) scale(1);
+    }
+}
+
+/* GLOW EFFECT */
+@keyframes logoGlow{
+    0%{
+        filter:drop-shadow(0 0 10px rgba(255,255,255,0.15));
+    }
+
+    50%{
+        filter:drop-shadow(0 0 25px rgba(255,255,255,0.4));
+    }
+
+    100%{
+        filter:drop-shadow(0 0 10px rgba(255,255,255,0.15));
+    }
+}
+
+/* HOVER EFFECT */
+.title img:hover{
+    transform:scale(1.05);
+}
+
+.subtitle{
+    text-align:center;
+    color:#f2e6d0;
+    margin-bottom:60px;
+    font-size:1.1rem;
+    animation:fadeUp 1s ease;
+}
+
+@keyframes fadeDown{
+    from{
+        opacity:0;
+        transform:translateY(-30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* BOOK AREA */
+.bookshelf{
+    display:flex;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:60px;
+}
+
+/* BOOK */
+.book{
+    width:210px;
+    height:320px;
+    position:relative;
+    cursor:pointer;
+    transform-style:preserve-3d;
+    transition:0.5s;
+    animation:float 4s ease-in-out infinite;
+}
+
+.book:hover{
+    transform:
+    translateY(-15px)
+    rotate(-4deg)
+    scale(1.05);
+
+    box-shadow:0 0 30px rgba(255,255,255,0.25);
+}
+
+.book-cover{
+    width:100%;
+    height:100%;
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+
+    box-shadow:
+    10px 15px 35px rgba(0,0,0,0.7);
+}
+
+.book-cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:0.4s;
+}
+
+.book:hover img{
+    transform:scale(1.08);
+}
+
+/* SHINE EFFECT */
+.book-cover::after{
+    content:"";
+    position:absolute;
+    top:0;
+    left:-100%;
+    width:60%;
+    height:100%;
+    background:rgba(255,255,255,0.3);
+    transform:skewX(-20deg);
+    transition:0.8s;
+}
+
+.book:hover .book-cover::after{
+    left:140%;
+}
+
+/* FLOAT ANIMATION */
+@keyframes float{
+    0%{
+        transform:translateY(0px);
+    }
+    50%{
+        transform:translateY(-10px);
+    }
+    100%{
+        transform:translateY(0px);
+    }
+}
+
+/* BOOK TITLE */
+.book-title{
+    text-align:center;
+    margin-top:15px;
+    color:white;
+    font-size:1rem;
+    text-shadow:2px 2px 5px rgba(0,0,0,0.7);
+}
+
+/* READER */
+.reader{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.4);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:999;
+    padding:20px;
+    animation:fadeIn 0.5s ease;
+}
+
+.reader.active{
+    display:flex;
+}
+
+@keyframes fadeIn{
+    from{
+        opacity:0;
+    }
+    to{
+        opacity:1;
+    }
+}
+
+/* OPEN BOOK */
+.open-book{
+    width:95%;
+    max-width:1200px;
+    height:85vh;
+    background:#f6ecd2;
+    border-radius:15px;
+    overflow:hidden;
+    display:flex;
+    position:relative;
+
+    box-shadow:0 0 50px rgba(0,0,0,0.7);
+
+    animation:openBook 0.6s ease;
+}
+
+@keyframes openBook{
+    from{
+        transform:scale(0.5) rotateY(90deg);
+        opacity:0;
+    }
+    to{
+        transform:scale(1) rotateY(0deg);
+        opacity:1;
+    }
+}
+
+/* PAGES */
+.page {
+    /* Remove width: 50%; from here so we can set custom widths below */
+    padding: 50px;
+    overflow-y: auto;
+    line-height: 2;
+    position: relative;
+    font-size: 1.05rem;
+}
+
+.left-page {
+    width: 65%; 
+    border-right: 2px solid #d4c3a3;
+    background:#fffaf0;
+}
+
+.right-page {
+    width: 70%; 
+    background:#fdf6e3;
+}
+
+/* BUTTONS */
+.controls{
+    position:absolute;
+    top:20px;
+    right:20px;
+    display:flex;
+    gap:10px;
+    z-index:10;
+}
+
+button{
+    border:none;
+    padding:12px 18px;
+    border-radius:8px;
+    cursor:pointer;
+    background:#5a3825;
+    color:white;
+    transition:0.3s;
+    font-size:14px;
+}
+
+button:hover{
+    background:#7c5338;
+    transform:scale(1.05);
+}
+ 
+.close-btn{
+    background:#8b1e1e;
+}
+
+/* ANNOTATIONS */
+.annotation{
+    color:#1f4c7a;
+    cursor:pointer;
+    position:relative;
+    border-bottom:2px dotted #1f4c7a;
+    font-weight:bold;
+}
+
+.note{
+    position:absolute;
+    bottom:140%;
+    left:50%;
+    transform:translateX(-50%);
+    width:240px;
+    background:#222;
+    color:white;
+    padding:12px;
+    border-radius:8px;
+    font-size:0.9rem;
+    line-height:1.5;
+    visibility:hidden;
+    opacity:0;
+    transition:0.3s;
+    z-index:100;
+}
+
+.annotation:hover .note,
+.annotation:focus .note{
+    visibility:visible;
+    opacity:1;
+}
+
+/* SCROLLBAR */
+.page::-webkit-scrollbar{
+    width:8px;
+}
+
+.page::-webkit-scrollbar-thumb{
+    background:#b89b72;
+    border-radius:10px;
+}
+
+/* ACCESSIBILITY */
+button:focus,
+.annotation:focus{
+    outline:3px solid gold;
+}
+
+
+/* MOBILE */
+@media(max-width:900px){
+
+    .open-book{
+        flex-direction:column;
+        height:95vh;
+    }
+
+    .page{
+        width:100%;
+        height:50%;
+    }
+
+    .left-page{
+        border-right:none;
+        border-bottom:2px solid #d4c3a3;
+    }
+
+    .title{
+        font-size:2.5rem;
+    }
+
+}
+
+</style>
+</head>
+
+
+
+<body>
+
+<div class="table">
+
+   <h1 class="title">
+    <img src="SalinKuwento.png" alt="Salin Kuwento Logo" style="max-width:900px; width:300%; height:auto;">
+</h1>
+
+
+
+    <p class="subtitle">
+        An Interactive Library of Translated Short Stories from the Global South and Global North.
+    </p>
+
+    <div class="bookshelf">
+
+        <!-- BOOK 1 -->
+         <div class="book" onclick="openBook('butterfly')">
+
+            <div class="book-cover">
+                <img 
+                src="Butterfliescover.png"
+                alt="The Butterfly Book Cover">
+            </div>
+
+            <div class="book-title">
+                Butterflies
+            </div>
+
+        </div>
+        <!-- BOOK 2 -->
+        <div class="book" onclick="openBook('matchgirl')">
+
+            <div class="book-cover">
+                <img 
+                src="magicover.png"
+                alt="The Gift of the Magi Book Cover">
+            </div>
+
+            <div class="book-title">
+                The Gift of the Magi
+            </div>
+
+        </div>
+
+        <!-- BOOK 3 -->
+        <div class="book" onclick="openBook('princess')">
+
+            <div class="book-cover">
+                <img 
+                src="documents.png"
+                alt="Project Ledger Cover">
+            </div>
+
+            <div class="book-title">
+                The Official Project Ledger: Architecture, Team, and References
+            </div>
+
+        </div>
+
+        <!-- BOOK 3 -->
+       
+
+    </div>
+
+</div>
+
+<!-- READER -->
+<div class="reader" id="reader">
+
+    <div class="open-book">
+
+        <div class="controls">
+            <button onclick="showOriginal()">Original</button>
+            <button onclick="showTranslation()">Salin</button>
+            <button id="speakBtn">🔊 Listen</button>
+            <button class="close-btn" onclick="closeBook()">Close</button>
+        </div>
+
+        <!-- ORIGINAL -->
+        <div class="page left-page" id="originalPage"></div>
+
+        <!-- TRANSLATED -->
+        <div class="page right-page" id="translatedPage"></div>
+
+    </div>
+
+</div>
+
+<script>
+
+const reader = document.getElementById("reader");
+
+function openBook(book){
+
+    reader.classList.add("active");
+
+    if(book === "matchgirl"){
+        loadMatchGirl();
+    }
+
+    if(book === "princess"){
+        loadPrincess();
+    }
+
+    if(book === "butterfly"){
+        loadButterfly();
+    }
+}
+
+function closeBook(){
+    reader.classList.remove("active");
+}
+
+function showOriginal(){
+    document.getElementById("originalPage").style.display = "block";
+    document.getElementById("translatedPage").style.display = "none";
+}
+
+function showTranslation(){
+    document.getElementById("originalPage").style.display = "none";
+    document.getElementById("translatedPage").style.display = "block";
+}
+
+/* STORY 1 */
+
+function loadMatchGirl(){
+
+document.getElementById("originalPage").innerHTML = `
+<h1>The Gift of the Magi</h1>
+<h5>by O. Henry</h5>
+
+<p>One dollar and eighty-seven cents.</p>
+
+<p>That was all. She had put it aside, one cent and then another and then another, in her careful buying of meat and other food. Della counted it three times. One dollar and eighty-seven cents. And the next day would be Christmas.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="coins.jpg" alt="barya" width="500">
+</div>
+<p>There was nothing to do but fall on the bed and cry. So Della did it. While the lady of the home is slowly growing quieter, we can look at the home. 
+    <span class="annotation" tabindex="0">
+        Furnished
+        <span class="note">“Furnished” means a room that already has furniture like beds, tables, and chairs.</span>
+    </span> 
+    rooms at a cost of $8 a week. There is little more to say about it. In the hall below was a letter-box too small to hold a letter. There was an electric bell, but it could not make a sound. Also there was a name beside the door: “Mr. James Dillingham Young.”</p>
+
+<p>When the name was placed there, Mr. James Dillingham Young was being paid $30 a week. Now, when he was being paid only $20 a week, the name seemed too long and important. It should perhaps have been “Mr. James D. Young.” But when Mr. James Dillingham Young entered the furnished rooms, his name became very short indeed. Mrs. James Dillingham Young put her arms warmly about him and called him “Jim.” You have already met her.</p>
+
+<p>She is Della. Della finished her crying and cleaned the marks of it from her face. She stood by the window and looked out with no interest. Tomorrow would be Christmas Day, and she had only $1.87 with which to buy Jim a gift. She had put aside as much as she could for months, with this result. Twenty dollars a week is not much. Everything had cost more than she had expected. It always happened like that.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="window.png" alt="window" width="500">
+</div>
+<p>Only $1.87 to buy a gift for Jim. Her Jim. She had had many happy hours planning something nice for him. Something nearly good enough.</p>
+
+<p>Something almost worth the honor of belonging to Jim. There was a 
+    <span class="annotation" tabindex="0">
+        looking-glass
+        <span class="note">A mirror.</span>
+    </span> 
+    between the windows of the room. Perhaps you have seen the kind of looking-glass that is placed in $8 furnished rooms. It was very narrow. A person could see only a little of himself at a time. However, if he was very thin and moved very quickly, he might be able to get a good view of himself. Della, being quite thin, had 
+    <span class="annotation" tabindex="0">
+        mastered
+        <span class="note">Learned how to do something perfectly.</span>
+    </span> 
+    this art. Suddenly she turned from the window and stood before the glass. Her eyes were shining brightly, but her face had lost its color. Quickly she pulled down her hair and let it fall to its complete length. The James Dillingham Youngs were very proud of two things which they owned. One thing was Jim’s gold 
+    <span class="annotation" tabindex="0">
+        watch
+        <span class="note">A small clock that you wear or carry in your pocket to tell the time.</span>
+    </span>. 
+    It had once belonged to his father. And, long ago, it had belonged to his father’s father. The other thing was Della’s hair. If a queen had lived in the rooms near theirs, Della would have washed and dried her hair where the queen could see it. Della knew her hair was more beautiful than any queen’s jewels and gifts.</p>
+
+<p>If a king had lived in the same house, with all his riches, Jim would have looked at his watch every time they met.</p>
+
+<p>Jim knew that no king had anything so 
+    <span class="annotation" tabindex="0">
+        valuable
+        <span class="note">Worth a lot of money, or having great importance.</span>
+    </span>.</p>
+
+<p>So now Della’s beautiful hair fell about her, shining like a falling stream of brown water. It reached below her knee. It almost made itself into a dress for her. And then she put it up on her head again, nervously and quickly. Once she stopped for a moment and stood still while a tear or two ran down her face. She put on her old brown coat. She put on her old brown hat.</p>
+
+<p>With the bright light still in her eyes, she moved quickly out the door and down to the street.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="outside.png" alt="outside" width="500">
+</div>
+<p>Where she stopped, the sign said: “Mrs. Sofronie. Hair Articles of all Kinds.”</p>
+
+<p>Up to the second floor Della ran, and stopped to get her breath. Mrs. Sofronie, large, too white, cold-eyed, looked at her.</p>
+
+<p>“Will you buy my hair?” asked Della.</p>
+
+<p>“I buy hair,” said Mrs. Sofronie.</p>
+
+<p>“Take your hat off and let me look at it.”</p>
+
+<p>Down fell the brown waterfall.</p>
+
+<p>“Twenty dollars,” said Mrs. Sofronie, lifting the hair to feel its weight.</p>
+
+<p>“Give it to me quick,” said Della.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="hair.png" alt="hair" width="500">
+</div>
+<p>Oh, and the next two hours seemed to fly. She was going from one shop to another, to find a gift for Jim.</p>
+
+<p>She found it at last. It surely had been made for Jim and no one else. There was no other like it in any of the shops, and she had looked in every shop in the city. It was a gold watch chain, very simply made. Its value was in its rich and pure 
+    <span class="annotation" tabindex="0">
+        material
+        <span class="note">The physical substance things are made of (in this case, gold).</span>
+    </span>. 
+    Because it was so plain and simple, you knew that it was very valuable. All good things are like this.</p>
+
+<p>It was good enough for The Watch.</p>
+
+<p>As soon as she saw it, she knew that Jim must have it. It was like him. Quietness and value—Jim and the chain both had quietness and value. She paid twenty-one dollars for it. And she hurried home with the chain and eighty-seven cents.</p>
+
+<p>With that chain on his watch, Jim could look at his watch and learn the time anywhere he might be. Though the watch was so fine, it had never had a fine chain. He sometimes took it out and looked at it only when no one could see him do it. When Della arrived home, her mind quieted a little. She began to think more 
+    <span class="annotation" tabindex="0">
+        reasonably
+        <span class="note">Using good sense and sound judgment.</span>
+    </span>. 
+    She started to try to cover the sad marks of what she had done.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="watch.png" alt="watch" width="500">
+</div>
+<p>Love and large-hearted giving, when added together, can leave deep marks. It is never easy to cover these marks, dear friends—never easy. Within forty minutes her head looked a little better. With her short hair, she looked wonderfully like a schoolboy. She stood at the looking-glass for a long time.</p>
+
+<p>“If Jim doesn’t kill me,” she said to herself, “before he looks at me a second time, he'll say I look like a girl who sings and dances for money. But what could I do—oh! What could I do with a dollar and eighty-seven cents?”</p>
+
+<p>At seven, Jim’s dinner was ready for him.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="mirror.png" alt="mirror" width="500">
+</div>
+<p>Jim was never late. Della held the watch chain in her hand and sat near the door where he always entered. Then she heard his step in the hall and her face lost color for a moment. She often said little prayers quietly, about simple everyday things. And now she said: “Please God, make him think I’m still pretty.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="jim.png" alt="jim" width="500">
+</div>
+<p>The door opened and Jim stepped in. He looked very thin and he was not smiling. Poor fellow, he was only twenty-two—and with a family to take care of! He needed a new coat and he had nothing to cover his cold hands. Jim stopped inside the door. He was as quiet as a hunting dog when it is near a bird. His eyes looked strangely at Della, and there was an 
+    <span class="annotation" tabindex="0">
+        expression
+        <span class="note">The look on someone's face that shows their feelings.</span>
+    </span> 
+    in them that she could not understand. It filled her with fear.</p>
+
+<p>It was not anger, nor surprise, nor anything she had been ready for. He simply looked at her with that strange expression on his face. Della went to him.</p>
+
+<p>“Jim, dear,” she cried, “don’t look at me like that. I had my hair cut off and sold it. I couldn’t live through Christmas without giving you a gift. My hair will grow again. You won’t care, will you? My hair grows very fast. It’s Christmas, Jim. Let’s be happy. You don’t know what a nice—what a beautiful nice gift I got for you.”</p>
+
+<p>“You’ve cut off your hair?” asked Jim slowly. He seemed to 
+    <span class="annotation" tabindex="0">
+        labor
+        <span class="note">To work very hard or struggle to do something.</span>
+    </span> 
+    to understand what had happened. He seemed not to feel sure he knew.</p>
+
+<p>“Cut it off and sold it,” said Della. “Don’t you like me now? I’m me, Jim. I’m the same without my hair.”</p>
+
+<p>Jim looked around the room.</p>
+
+<p>“You say your hair is gone?” he said.</p>
+
+<p>“You don’t have to look for it,” said Della. “It’s sold, I tell you—sold and gone, too. It’s the night before Christmas, boy. Be good to me, because I sold it for you. Maybe the hairs of my head could be counted,” she said, “but no one could ever count my love for you. Shall we eat dinner, Jim?”</p>
+
+<p>Jim put his arms around his Della. For ten seconds let us look in another direction. Eight dollars a week or a million dollars a year—how different are they? Someone may give you an answer, but it will be wrong. The 
+    <span class="annotation" tabindex="0">
+        magi
+        <span class="note">Wise men; historically, the three wise men who brought gifts to the baby Jesus.</span>
+    </span> 
+    brought valuable gifts, but that was not among them. My meaning will be explained soon.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="hug.png" alt="hug" width="500">
+</div>
+<p>From inside the coat, Jim took something tied in paper. He threw it upon the table.</p>
+
+<p>“I want you to understand me, Della,” he said. “Nothing like a haircut could make me love you any less. But if you’ll open that, you may know what I felt when I came in.”</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="comb.png" alt="combs" width="500">
+</div>
+<p>White fingers pulled off the paper. And then a cry of joy; and then a change to tears.</p>
+
+<p>For there lay The 
+    <span class="annotation" tabindex="0">
+        Combs
+        <span class="note">Toothed tools used here as decorative hair accessories to hold hair in place.</span>
+    </span>—the combs that Della had seen in a shop window and loved for a long time. Beautiful combs, with jewels, perfect for her beautiful hair. She had known they cost too much for her to buy them. She had looked at them without the least hope of owning them. And now they were hers, but her hair was gone.</p>
+
+<p>But she held them to her heart, and at last was able to look up and say: “My hair grows so fast, Jim!”</p>
+
+<p>And then she jumped up and cried, “Oh, oh!”</p>
+
+<p>Jim had not yet seen his beautiful gift. She held it out to him in her open hand. The gold seemed to shine softly as if with her own warm and loving spirit.</p>
+
+<p>“Isn’t it perfect, Jim? I hunted all over town to find it. You’ll have to look at your watch a hundred times a day now. Give me your watch. I want to see how they look together.”</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="sit.png" alt="sits" width="500">
+</div>
+<p>Jim sat down and smiled.</p>
+
+<p>“Della,” said he, “let’s put our Christmas gifts away and keep them a while. They’re too nice to use now. I sold the watch to get the money to buy the combs. And now I think we should have our dinner.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="magi.png" alt="magis" width="500">
+</div>
+<p>The magi, as you know, were wise men—wonderfully wise men—who brought gifts to the newborn Christ-child. They were the first to give Christmas gifts. Being wise, their gifts were 
+    <span class="annotation" tabindex="0">
+        doubtless
+        <span class="note">Without a doubt; completely certain.</span>
+    </span> 
+    wise ones. And here I have told you the story of two children who were not wise. Each sold the most valuable thing he owned in order to buy a gift for the other. But let me speak a last word to the wise of these days: Of all who give gifts, these two were the most wise. Of all who give and receive gifts, such as they are the most wise.</p>
+
+<p>Everywhere they are the wise ones.</p>
+
+<p>They are the magi.</p>
+`;
+
+document.getElementById("translatedPage").innerHTML = `
+<h1>Ang Regalo ng mga Mago</h1>
+<h5>ni O. Henry</h5>
+
+<p>Isang dolyar at pitumpu't pitong sentimos.</p>
+
+<p>Iyon lang. Ipinagtabi niya iyon, isang sentimos nang isang sentimos, sa maingat na pagbili ng karne at iba pang pagkain. Tiningnan ni Della nang tatlong beses. Isang dolyar at pitumpu't pitong sentimos. At kinabukasan ay Pasko na.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="coins.jpg" alt="barya" width="500">
+</div>
+<p>Wala nang ibang magagawa kundi humiga sa kama at umiyak. Kaya ginawa ni Della iyon. Habang ang babae ng tahanan ay unti-unting tumatahimik, tingnan natin ang tahanan. Mga silid na may 
+    <span class="annotation" tabindex="0">
+        kasangkapan
+        <span class="note">Mga gamit sa loob ng bahay tulad ng kama, lamesa, o upuan (furniture).</span>
+    </span> 
+    sa halagang $8 isang linggo. Wala nang masyadong masasabi pa. Sa 
+    <span class="annotation" tabindex="0">
+        pasilyo
+        <span class="note">Isang makitid na daanan sa loob ng gusali o bahay (hallway).</span>
+    </span> 
+    sa ibaba ay may isang kahon ng sulat na masyadong maliit para maglaman ng sulat. May isang elektrisidad na kampanilya, pero hindi ito makagawa ng tunog. May pangalan din sa tabi ng pinto: "Mr. James Dillingham Young."</p>
+
+<p>Nang ilagay doon ang pangalan, si Mr. James Dillingham Young ay sumusuweldo ng $30 isang linggo. Ngayon, na sumusuweldo na lamang siya ng $20 isang linggo, masyado nang mahaba at mahalaga ang pangalan. Marahil ay dapat na "Mr. James D. Young." Pero nang pumasok si Mr. James Dillingham Young sa mga silid na may kasangkapan, naging napakaikli ng kanyang pangalan. Yumakap ang Mrs. James Dillingham Young ng mahigpit sa kanya at tinawag siyang "Jim." Nakilala mo na siya. Siya si Della.</p>
+
+<p>Natapos na ang pag-iyak ni Della at nilinis ang mga 
+    <span class="annotation" tabindex="0">
+        bakas
+        <span class="note">Tanda, marka, o labi ng isang bagay na natira (marks/traces).</span>
+    </span> 
+    nito sa kanyang mukha. Tumayo siya sa bintana at tiningnan ang labas nang walang interes. Bukas ay Araw ng Pasko, at mayroon lamang siyang $1.87 para bilhan ng regalo si Jim. Ipinagtabi niya ang lahat ng kaya niya sa loob ng maraming buwan, at ito ang resulta. Dalawampung dolyar isang linggo ay hindi marami. Lahat ay nagkakahalaga ng higit sa inaasahan niya. Laging ganoon ang nangyayari.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="window.png" alt="window" width="500">
+</div>
+<p>Lamang na $1.87 para bilhan ng regalo si Jim. Ang Jim niya. Marami siyang masasayang oras na inilalaan sa pagpaplano ng isang magandang bagay para sa kanya. Isang bagay na halos sapat na. Isang bagay na halos karapat-dapat sa karangalan na pag-aari ni Jim.</p>
+
+<p>May salamin sa pagitan ng mga bintana ng silid. Marahil ay nakita mo na ang uri ng salamin na inilalagay sa mga silid na $8 isang linggo. Napakaipot nito. Kaunting bahagi lamang ng sarili ang makikita ng isang tao sa isang pagkakataon. Gayunpaman, kung siya ay napakapayat at gumagalaw ng napakabilis, maaaring makakuha siya ng magandang tanawin ng kanyang sarili. Si Della, na medyo payat, ay 
+    <span class="annotation" tabindex="0">
+        nahasa
+        <span class="note">Naging sanay, magaling, o bihasa sa isang gawain (mastered).</span>
+    </span> 
+    na sa sining na ito.</p>
+
+<p>Bigla siyang tumalikod sa bintana at tumayo sa harap ng salamin. Kumikislap ang kanyang mga mata, pero nawala ang kulay ng kanyang mukha. Mabilis niyang ibinaba ang kanyang buhok at pinabayaang bumagsak sa buong haba nito.</p>
+
+<p>Ang mga James Dillingham Young ay labis na ipinagmamalaki ang dalawang bagay na pag-aari nila. Ang isa ay ang gintong 
+    <span class="annotation" tabindex="0">
+        relo
+        <span class="note">Isang maliit na orasan na isinusuot sa pulso o ibinubulsa (watch).</span>
+    </span> 
+    ni Jim. Naging pag-aari ito ng kanyang ama noon. At, noong matagal na panahon, naging pag-aari ito ng ama ng kanyang ama. Ang isa pang bagay ay ang buhok ni Della. Kung may reyna na nakatira sa mga silid malapit sa kanila, huhugasan at patutuyuin ni Della the kanyang buhok kung saan makikita ito ng reyna. Alam ni Della na ang kanyang buhok ay mas maganda kaysa sa anumang alahas at regalo ng reyna.</p>
+
+<p>Kung may hari na nakatira sa parehong bahay, kasama ang lahat ng kanyang kayamanan, titingnan ni Jim ang kanyang relo sa tuwing magkikita sila. Alam ni Jim na walang hari na may anumang bagay na napakahalaga.</p>
+
+<p>Kaya ngayon, ang magandang buhok ni Della ay bumagsak sa paligid niya, kumikislap na parang bumabagsak na ilog ng kayumangging tubig. Umabot ito sa ibaba ng kanyang tuhod. Halos nagmukha itong damit para sa kanya. At pagkatapos ay inayos niya ulit ito sa kanyang ulo, nerbiyoso at mabilis. Isang beses siyang tumigil saglit at nanatiling nakatayo habang isang luha o dalawa ang tumulo sa kanyang mukha.</p>
+
+<p>Isinuot niya ang kanyang lumang kayumangging kasuotan. Isinuot niya ang kanyang lumang kayumangging sumbrero. May kislap na ilaw pa rin sa kanyang mga mata, mabilis siyang lumabas ng pinto at pababa sa kalye. Kung saan siya tumigil, nakasulat sa 
+    <span class="annotation" tabindex="0">
+        karatula
+        <span class="note">Isang pampublikong patalastas o signbord na nagbibigay ng impormasyon (sign).</span>
+    </span>: 
+    "Mrs. Sofronie. Lahat ng Uri ng Bagay na Pang-Buhok."</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="outside.png" alt="outside" width="500">
+</div>
+<p>Pataas sa ikalawang palapag tumakbo si Della, at tumigil para huminga ng malalim. Si Mrs. Sofronie, malaki, masyadong maputi, matang malamig, ay tiningnan siya.</p>
+
+<p>“Bibilhin niyo ba ang buhok ko?” tanong ni Della.</p>
+
+<p>“Bumibili ako ng buhok,” sabi ni Mrs. Sofronie. “Alisin mo ang sumbrero mo at tingnan ko.”</p>
+
+<p>Bumagsak ang kayumangging talon.</p>
+
+<p>“Dalawampung dolyar,” sabi ni Mrs. Sofronie, itinataas ang buhok para damhin ang bigat nito.</p>
+
+<p>“Ibigay niyo agad sa akin,” sabi ni Della.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="hair.png" alt="hair" width="500">
+</div>
+<p>At ang susunod na dalawang oras ay parang lumipas nang mabilis. Nagpunta siya sa isang tindahan patungo sa isa, para humanap ng regalo para kay Jim.</p>
+
+<p>Sa huli ay natagpuan niya ito. Tiyak na ginawa ito para kay Jim at wala nang iba. Walang katulad nito sa anumang tindahan, and tiningnan niya ang bawat tindahan sa lungsod. Ito ay isang ginto na kuwintas ng relo, napakasimpleng gawa. Ang halaga nito ay nasa mayaman at 
+    <span class="annotation" tabindex="0">
+        dalisay
+        <span class="note">Walang halo, malinis, o puro (pure).</span>
+    </span> 
+    na materyal. Dahil napakasimple at plain, alam mong napakahalaga nito. Lahat ng mabubuting bagay ay ganito.</p>
+
+<p>Sapat na ito para sa Relo.</p>
+
+<p>Pagkakita niya, alam niyang dapat ito mapasakay kay Jim. Parang siya. Katahimikan at halaga—parehong may katahimikan at halaga si Jim at ang kuwintas. Binayaran niya ito ng dalawampu't isang dolyar. At nagmadali siyang umuwi kasama ang kuwintas at pitumpu't pitong sentimos.</p>
+
+<p>Sa kuwintas na iyon sa kanyang relo, maaaring tignan ni Jim ang kanyang relo at malaman ang oras kahit saan siya naroroon. Bagama't napakaganda ng relo, hindi pa ito nagkaroon ng magandang kuwintas. Minsan ay inilalabas niya ito at tinitingnan lamang kapag walang makakakita sa kanya.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="watch.png" alt="watch" width="500">
+</div>
+<p>Nang makauwi si Della, kumalma nang kaunti ang kanyang isip. Sinimulan niyang mag-isip nang mas 
+    <span class="annotation" tabindex="0">
+        makatwiran
+        <span class="note">Gumagamit ng tamang pag-iisip, lohika, o katwiran (reasonably).</span>
+    </span>. 
+    Sinimulan niyang subukang takpan ang malulungkot na bakas ng kanyang nagawa. Ang pag-ibig at ang malawak na pagbibigay, kapag pinagsama, ay maaaring mag-iwan ng malalim na bakas. Hindi kailanman madaling takpan ang mga bakas na ito, mga kaibigan—hindi kailanman madali. Sa loob ng apatnapung minuto ay medyo gumanda ang hitsura ng kanyang ulo. Sa kanyang maikling buhok, kahanga-hanga siyang magmukhang isang batang lalaking estudyante. Matagal siyang tumayo sa salamin.</p>
+
+<p>“Kung hindi ako papatayin ni Jim,” sabi niya sa kanyang sarili, “bago niya ako tingnan ng pangalawang pagkakataon, sasabihin niyang mukha akong babaeng kumakanta at sumasayaw para sa pera. Pero ano ang magagawa ko—oh! Ano ang magagawa ko sa isang dolyar at pitumpu't pitong sentimos?”</p>
+
+<p>Alas-siyete, handa na ang hapunan ni Jim. Hindi kailanman nahuhuli si Jim. Hawak ni Della ang kuwintas ng relo at umupo malapit sa pinto kung saan siya palaging pumapasok. Pagkatapos ay narinig niya ang kanyang mga hakbang sa pasilyo at nawala ang kulay ng kanyang mukha saglit. Madalas siyang tahimik na nagdarasal tungkol sa simpleng pang-araw-araw na bagay. At ngayon ay sinabi niya: “Panginoon, gawin ninyong isipin niya na maganda pa rin ako.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="mirror.png" alt="mirror" width="500">
+</div>
+<p>Bumukas ang pinto at pumasok si Jim. Mukha siyang napakapayat at hindi siya ngingiti. Kawawang tao, dalawampu't dalawa lang siya—and may pamilyang binubuhay! Kailangan niya ng bagong kasuotan at wala siyang anumang panakip sa kanyang malamig na mga kamay. Tumigil si Jim sa loob ng pinto. Tahimik siya na parang asong pang-aso kapag malapit sa ibon. Kakaiba ang tingin ng kanyang mga mata kay Della, at may 
+    <span class="annotation" tabindex="0">
+        ekspresyon
+        <span class="note">Ang hitsura ng mukha na nagpapakita ng damdamin o saloobin (expression).</span>
+    </span> 
+    doon na hindi niya maunawaan. Pinuno nito ng takot ang kanyang puso. Hindi ito galit, hindi gulat, hindi anumang inihanda niya. Tiningnan lang niya siya nang may kakaibang ekspresyon sa kanyang mukha. Lumapit si Della sa kanya.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="jim.png" alt="jim" width="500">
+</div>
+<p>“Jim, mahal,” sigaw niya, “huwag mo akong tingnan nang ganyan. Pinutol at ipinabenta ko ang buhok ko. Hindi ko makakayanang malampasan ang Pasko nang walang regalong ibibigay sa iyo. Tutubo ulit ang buhok ko. Hindi ka mag-aalala, di ba? Napakabilis tumubo ng buhok ko. Pasko na, Jim. Magsaya tayo. Hindi mo alam kung gaano kaganda—kung gaano kagandang regalo ang nakuha ko para sa iyo.”</p>
+
+<p>“Pinutol mo ang buhok mo?” tanong ni Jim nang dahan-dahan. Parang hirap siyang maunawaan ang nangyari. Parang hindi siya sigurado na alam niya.</p>
+
+<p>“Pinutol at ipinabenta,” sabi ni Della. “Hindi mo ba ako gusto ngayon? Ako pa rin ito, Jim. Ako pa rin ang walang buhok.”</p>
+
+<p>Tumingin sa paligid ng silid si Jim.</p>
+
+<p>“Sabi mo wala na ang buhok mo?” sabi niya.</p>
+
+<p>“Hindi mo na kailangang hanapin,” sabi ni Della. “Ipinabenta ko, sinasabi ko sa iyo—ipinabenta at wala na. Gabing Bago ang Pasko, lalaki. Maging mabuti ka sa edin, dahil ipinabenta ko ito para sa iyo. Marahil ang mga buhok sa aking ulo ay mabibilang,” sabi niya, “pero walang sinuman ang makakabilang sa pag-ibig ko para sa iyo. Kakain ba tayo, Jim?”</p>
+
+<p>Yumakap si Jim sa kanyang Della. Sa loob ng sampung segundo, tingnan natin sa ibang direksyon. Walong dolyar isang linggo o isang milyong dolyar isang taon—gaano ba sila kaiba? Maaaring may magbigay sa iyo ng sagot, pero mali ito. Ang mga 
+    <span class="annotation" tabindex="0">
+        mago
+        <span class="note">Mga taong marurunong; partikular ang Tatlong Hari na nag-alay ng regalo kay Hesus (Magi).</span>
+    </span> 
+    ay nagdala ng mahahalagang regalo, pero hindi iyon kabilang doon. Ipapaliwanag ko ang aking ibig mean sa lalong madaling panahon.</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="hug.png" alt="hug" width="500">
+</div>
+<p>Mula sa loob ng kasuotan, kumuha si Jim ng isang bagay na nakatali sa papel. Ibinato niya ito sa mesa.</p>
+
+<p>“Gusto kong maunawaan mo ako, Della,” sabi niya. “Walang katulad ng pagupit ng buhok ang makapagpapababa ng pagmamahal ko sa iyo. Pero kung bubuksan mo iyan, malalaman mo ang aking naramdaman nang pumasok ako.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="comb.png" alt="combs" width="500">
+</div>
+<p>Binuksan ng mga puting daliri ang papel. At pagkatapos ay isang sigaw ng galak; at pagkatapos ay pagbabago sa luha.</p>
+
+<p>Dahil naroon ang mga Suhol—ang mga
+    <span class="annotation" tabindex="0">
+        suklay
+        <span class="note">Isang kasangkapan na may mga ngipin na ginagamit sa pag-aayos o pagpapakapit ng buhok (combs).</span>
+    </span>
+    na nakita ni Della sa isang tindahan at matagal nang minahal. Magagandang suklay, may alahas, perpekto para sa kanyang magandang buhok. Alam niyang masyadong mahal para mabili niya. Tiningnan niya ang mga ito nang walang katiting na pag-asa na magmamay-ari ng mga ito. At ngayon ay pag-aari na niya, pero wala na ang kanyang buhok.</p>
+
+<p>Pero inakap niya ang mga ito sa kanyang puso, at sa huli ay nakayanang tumingala at sabihin: “Napakabilis tumubo ng buhok ko, Jim!”</p>
+
+<p>At pagkatapos ay tumalon siya at sumigaw, “Oh, oh!”</p>
+
+<p>Hindi pa nakikita ni Jim ang kanyang magandang regalo. Inilabas niya ito sa kanya sa kanyang bukas na palad. Tila malambot na kumikislap ang ginto, na parang kasama ang kanyang sariling mainit at mapagmahal na diwa.</p>
+
+<p>“Hindi ba ito perpekto, Jim? Hinanap ko sa buong lungsod para mahanap ito. Isang daang beses mo nang titingnan ang relo mo sa isang araw ngayon. Ibigay mo sa akin ang relo mo. Gusto kong makita kung gaano sila kaganda kapag magkasama.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="sit.png" alt="sits" width="500">
+</div>
+<p>Umupo si Jim at ngumiti.</p>
+
+<p>“Della,” sabi niya, “itabi muna natin ang ating mga regalo ng Pasko at ingatan natin nang kaunti. Masyadong maganda para gamitin ngayon. Ipinabenta ko ang relo para makuha ang perang pambili ng mga suklay. At ngayon sa palagay ko ay dapat nating kainin ang ating hapunan.”</p>
+<div style="text-align: center; margin: 20px 0;">
+    <img src="magi.png" alt="magis" width="500">
+</div>
+<p>Ang mga mago, ganoon ang alam mo, ay mga taong marurunong—kahanga-hangang mga taong marurunong—na nagdala ng regalo sa bagong panganak na batang Cristo. Sila ang ng unang nagbigay ng mga regalo ng Pasko. Dahil marurunong, ang kanilang mga regalo ay tiyak na marurunong. At dito ay ikinuwento ko sa iyo ang kuwento ng dalawang bata na hindi marurunong. Bawat isa ay ipinabenta ang pinakamahalagang bagay na pag-aari niya para bilhan ng regalo ang isa. Pero hayaan akong magsalita ng huling salita sa mga marurunong ngayon: Sa lahat ng nagbibigay ng regalo, ang dalawang ito ang pinakamarurunong. Sa lahat ng nagbibigay at tumatanggap ng regalo, ang mga tulad nila ang pinakamarurunong.</p>
+
+<p>Sa lahat ng lugar ay sila ang mga marurunong.</p>
+
+<p>Sila ang mga mago.</p>
+`;
+
+showOriginal();
+
+}
+
+/* STORY 2 */
+
+function loadPrincess(){
+
+document.getElementById("originalPage").innerHTML = `
+<h2>The Princess and the Pea</h2>
+
+<p>
+Once upon a time there was a prince who wanted to marry a real princess.
+</p>
+`;
+
+document.getElementById("translatedPage").innerHTML = `
+<h2>Salin</h2>
+
+<p>
+Noong unang panahon, may isang prinsipe na nais magpakasal sa isang tunay na prinsesa.
+</p>
+`;
+
+showOriginal();
+
+}
+
+/* STORY 3 */
+
+function loadButterfly(){
+
+document.getElementById("originalPage").innerHTML = `
+<h1>Butterflies</h1>
+<h5>by Patricia Grace</h5>
+
+<p>
+    The Grandmother plaited her granddaughter’s hair and then she said,
+    “Get your lunch. Put it in your bag. Get your apple. You come straight
+    back after school, straight home here. Listen to the teacher,” she said.
+    “Do what she say.”
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="braids.png" alt="Lola and Apo" width="500">
+</div>
+
+<p>
+    Her grandfather was out on the step. He walked down the path with her
+    and out onto the footpath. He said to a neighbor,
+    “Our granddaughter goes to school. She lives with us now.”
+</p>
+
+<p>
+    “She’s fine,” the neighbor said. “She’s terrific with her two
+    <span class="annotation" tabindex="0">
+        plaits
+        <span class="note">
+            “Plaits” are sections of hair that are braided together.
+        </span>
+    </span>
+    in her hair.”
+</p>
+
+<p>
+    “And clever,” the grandfather said. “Writes every day in her book.”
+</p>
+
+<p>
+    “She’s fine,” the neighbor said.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="neighbor.png" alt="Kapitbahay" width="500">
+</div>
+
+<p>
+    The grandfather waited with his granddaughter by the
+    <span class="annotation" tabindex="0">
+        crossing
+        <span class="note">
+            “Crossing” is a place on the road where people safely walk across.
+        </span>
+    </span>
+    and then he said,
+    “Go to school. Listen to the teacher. Do what she say.”
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="crossing.png" alt="tawiran" width="500">
+</div>
+
+<p>
+    When the granddaughter came home from school her grandfather was hoeing
+    around the cabbages. Her grandmother was picking beans. They stopped their work.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="school.png" alt="skwela" width="500">
+</div>
+
+<p>
+    “You bring your book home?” the grandmother asked.
+</p>
+
+<p>“Yes.”</p>
+
+<p>“You write your story?”</p>
+
+<p>“Yes.”</p>
+
+<p>“What’s your story?”</p>
+
+<p>“About the 
+    <span class="annotation" tabindex="0">
+        butterflies
+        <span class="note">
+            “Butterflies” are colorful insects with wings that fly from flower to flower.
+        </span>
+    </span>.
+</p>
+
+<p>“Get your book then. Read your story.”</p>
+
+<p>
+    The granddaughter took her book from her schoolbag and opened it.
+</p>
+
+<p>
+    “I killed all the butterflies,” she read.
+    “This is me and this is all the butterflies.”
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="story.png" alt="kuwento" width="500">
+</div>
+
+<p>“And your teacher like your story, did she?”</p>
+
+<p>“I don’t know.”</p>
+
+<p>“What your teacher say?”</p>
+
+<p>
+    “She said butterflies are beautiful creatures. They hatch out and fly in the sun.
+    The butterflies visit all the pretty flowers, she said. They lay their eggs and then they die.
+    You don’t kill butterflies, that’s what she said.”
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="teacher.png" alt="guro" width="500">
+</div>
+
+<p>
+    The grandmother and the grandfather were quiet for a long time,
+    and their granddaughter, holding the book, stood quite still in the warm garden.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="grandfather.png" alt="Lolo" width="500">
+</div>
+
+<p>
+    “Because you see,” the grandfather said,
+    “your teacher, she buy all her cabbages from the supermarket and that’s why.”
+</p>
+`;
+
+document.getElementById("translatedPage").innerHTML = `
+<h1>Mga Paru-paro</h1>
+<h5>ni Patricia Grace</h5>
+
+<p>
+    Sinuklayan ng Lola ang buhok na naka
+    <span class="annotation" tabindex="0">
+        tirintas
+        <span class="note">
+            Ang “tirintas” ay paraan ng pagsusuklay ng buhok kung saan pinagbubuhol-buhol ito sa tatlong hibla.
+        </span>
+    </span>
+    ng kanyang apo at pagkatapos ay sinabi,
+    "Kunin mo na ang baon mo. Ilagay mo sa bag mo. Kunin mo ang mansanas mo.
+    Dumiretso ka pauwi pagkatapos ng klase, dito mismo sa bahay.
+    Makinig ka sa guro mo," aniya.
+    "Gawin mo ang sasabihin niya."
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="braids.png" alt="Lola and Apo" width="500">
+</div>
+
+<p>
+    Nasa labas ng hagdan ang Lolo.
+    Isinabay niya ang apo sa paglalakad pababa ng daan hanggang sa bangketa.
+    Sinabi niya sa isang kapitbahay,
+    "Pumapasok na sa paaralan ang apo namin.
+    Sa amin na siya nakatira ngayon."
+</p>
+
+<p>
+    "Maayos naman siya," sabi ng kapitbahay.
+    "Ang ganda nga niya sa dalawa niyang tirintas."
+</p>
+
+<p>
+    "At matalino pa," sabi ng Lolo.
+    "Araw-araw sumusulat sa kuwaderno niya."
+</p>
+
+<p>
+    "Maayos siya," sabi ng kapitbahay.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="neighbor.png" alt="Kapitbahay" width="500">
+</div>
+
+<p>
+    Hinintay ng Lolo ang kanyang apo sa
+    <span class="annotation" tabindex="0">
+        tawiran
+        <span class="note">
+            Ang “tawiran” ay lugar sa kalsada kung saan ligtas na tumatawid ang mga tao.
+        </span>
+    </span>,
+    at pagkatapos ay sinabi,
+    "Pasok ka na. Makinig ka sa guro mo.
+    Sundin mo ang sasabihin niya."
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="crossing.png" alt="tawiran" width="500">
+</div>
+
+<p>
+    Pagdating ng apo mula sa paaralan, ang Lolo ay naghuhukay sa paligid ng mga repolyo.
+    Ang Lola naman ay pumipitas ng sitaw.
+    Tumigil sila sa kanilang ginagawa.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="school.png" alt="skwela" width="500">
+</div>
+
+<p>
+    "Dala mo ang kuwaderno mo?" tanong ng Lola.
+</p>
+
+<p>"Opo."</p>
+
+<p>"Isinulat mo ang kwento mo?"</p>
+
+<p>"Opo."</p>
+
+<p>"Ano'ng kwento mo?"</p>
+
+<p>
+    "Tungkol sa mga
+    <span class="annotation" tabindex="0">
+        paru-paro
+        <span class="note">
+            Ang “paru-paro” ay isang maliit na insekto na may makukulay na pakpak na lumilipad mula bulaklak hanggang bulaklak.
+        </span>
+    </span>.
+</p>
+
+<p>"Kunin mo nga ang kuwaderno mo. Basahin mo ang kwento mo."</p>
+
+<p>
+    Kinuha ng apo ang kuwaderno mula sa kanyang bag at binuksan ito.
+</p>
+
+<p>
+    "Pinatay ko lahat ng paru-paro," ang pagbasa niya.
+    "Ito ako at ito ang lahat ng paru-paro."
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="story.png" alt="kuwento" width="500">
+</div>
+
+<p>"At nagustuhan ba ng guro mo ang kwento mo?"</p>
+
+<p>"Hindi ko po alam."</p>
+
+<p>"Ano'ng sabi ng guro mo?"</p>
+
+<p>
+    "Sinabi niyang magagandang nilalang ang mga paru-paro.
+    Napipisa sila at lumilipad sa araw.
+    Dinadalaw raw ng mga paru-paro ang lahat ng magagandang bulaklak.
+    Nangingitlog sila at pagkatapos ay namamatay.
+    Huwag pumatay ng paru-paro, iyon ang sabi niya."
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="teacher.png" alt="guro" width="500">
+</div>
+
+<p>
+    Tumahimik nang matagal ang Lola at ang Lolo,
+    at ang kanilang apo, hawak-hawak ang kuwaderno,
+    ay nakatayong tahimik sa mainit na hardin.
+</p>
+
+<div style="text-align: center; margin: 20px 0;">
+    <img src="grandfather.png" alt="Lolo" width="500">
+</div>
+
+<p>
+    "Kasi, kita mo," sabi ng Lolo,
+    "ang guro mo, lahat ng repolyo niya ay binibili niya sa supermarket — kaya gano'n."
+</p>
+`;
+
+showOriginal();
+
+}
+
+</script>
+<script>
+(function () {
+    const synthesis = window.speechSynthesis; // Fallback handle
+    let currentAudio = null; // Holds our streaming AI audio file
+    let isSpeaking = false;
+
+    const speakBtn = document.getElementById("speakBtn");
+    if (!speakBtn) return;
+
+    function extractText(element) {
+        if (!element) return "";
+        const clone = element.cloneNode(true);
+        clone.querySelectorAll("img").forEach(el => el.remove());
+        clone.querySelectorAll(".note").forEach(el => el.remove());
+        return clone.innerText || clone.textContent || "";
+    }
+
+    function getCurrentStoryText() {
+        const originalPage = document.getElementById("originalPage");
+        const translatedPage = document.getElementById("translatedPage");
+        if (!originalPage || !translatedPage) return "";
+
+        const originalVisible = originalPage.offsetParent !== null && getComputedStyle(originalPage).display !== "none";
+        const translatedVisible = translatedPage.offsetParent !== null && getComputedStyle(translatedPage).display !== "none";
+
+        if (translatedVisible && !originalVisible) return extractText(translatedPage);
+        if (originalVisible && !translatedVisible) return extractText(originalPage);
+
+        const isTranslatedActive = translatedPage.classList.contains("active") || 
+                                   translatedPage.classList.contains("show") || 
+                                   translatedPage.classList.contains("visible");
+
+        return isTranslatedActive ? extractText(translatedPage) : extractText(originalPage);
+    }
+
+    speakBtn.addEventListener("click", async function () {
+        // If it's already playing, clicking the button halts the stream immediately
+        if (isSpeaking) {
+            if (currentAudio) currentAudio.pause();
+            speakBtn.textContent = "🔊 Listen";
+            isSpeaking = false;
+            return;
+        }
+
+        const fullText = getCurrentStoryText().trim();
+        if (!fullText) {
+            alert("No story text found.");
+            return;
+        }
+
+        speakBtn.textContent = "⏳ Loading AI Voice...";
+        speakBtn.disabled = true;
+
+        // Auto Language Detection
+        const tagalogKeywords = ["ang","mga","ng","sa","ni","kuwento","bata","relo","buhok","salin"];
+        const words = fullText.toLowerCase().split(/\W+/);
+        const isTagalog = words.some(word => tagalogKeywords.includes(word));
+        const detectedLang = isTagalog ? "fil-PH" : "en-US";
+
+        try {
+            // 1. Fetch the raw audio stream from your secure serverless function
+            const response = await fetch('/api/voice', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ text: fullText, language: detectedLang })
+            });
+
+            if (!response.ok) throw new Error("Voice generation failed.");
+
+            // 2. Convert the stream back into an executable sound file URL
+            const audioBlob = await response.blob();
+            const audioUrl = URL.createObjectURL(audioBlob);
+            
+            currentAudio = new Audio(audioUrl);
+
+            // 3. Audio Controls & State Handling
+            currentAudio.onplay = () => {
+                isSpeaking = true;
+                speakBtn.disabled = false;
+                speakBtn.textContent = "⏹️ Stop";
+            };
+
+            currentAudio.onended = () => {
+                isSpeaking = false;
+                speakBtn.textContent = "🔊 Listen";
+            };
+
+            currentAudio.play();
+
+        } catch (err) {
+            console.error(err);
+            alert("Could not load AI voice. Make sure your server is running.");
+            speakBtn.disabled = false;
+            speakBtn.textContent = "🔊 Listen";
+        }
+    });
+
+    // Stop speaking immediately if the child closes the book view
+    const closeBtn = document.querySelector(".close-btn");
+    if (closeBtn) {
+        closeBtn.addEventListener("click", () => {
+            if (currentAudio) currentAudio.pause();
+            isSpeaking = false;
+            speakBtn.textContent = "🔊 Listen";
+        });
+    }
+})();
+</script>
+</body>
+</html>
+
