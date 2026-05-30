@@ -1221,8 +1221,9 @@ showOriginal();
 </script>
 <script>
 (function () {
-    const synthesis = window.speechSynthesis; // Fallback handle
-    let currentAudio = null; // Holds our streaming AI audio file
+    // Core Web Audio API contexts for system-level memory playback
+    let audioContext = null;
+    let currentAudioSource = null;
     let isSpeaking = false;
 
     const speakBtn = document.getElementById("speakBtn");
@@ -1254,12 +1255,19 @@ showOriginal();
         return isTranslatedActive ? extractText(translatedPage) : extractText(originalPage);
     }
 
+    // Safely kills any active background memory sound processing arrays
+    function stopPlayback() {
+        if (currentAudioSource) {
+            try { currentAudioSource.stop(); } catch(e){}
+            currentAudioSource.disconnect();
+            currentAudioSource = null;
+        }
+        resetButton();
+    }
+
     speakBtn.addEventListener("click", async function () {
-        // If it's already playing, clicking the button halts the stream immediately
         if (isSpeaking) {
-            if (currentAudio) currentAudio.pause();
-            speakBtn.textContent = "🔊 Listen";
-            isSpeaking = false;
+            stopPlayback();
             return;
         }
 
@@ -1272,14 +1280,12 @@ showOriginal();
         speakBtn.textContent = "⏳ Loading AI Voice...";
         speakBtn.disabled = true;
 
-        // Auto Language Detection
         const tagalogKeywords = ["ang","mga","ng","sa","ni","kuwento","bata","relo","buhok","salin"];
         const words = fullText.toLowerCase().split(/\W+/);
         const isTagalog = words.some(word => tagalogKeywords.includes(word));
         const detectedLang = isTagalog ? "fil-PH" : "en-US";
 
         try {
-            // 1. Fetch the raw audio stream from your secure Gemini Vercel serverless function
             const response = await fetch('/api/voice', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -1291,57 +1297,57 @@ showOriginal();
                 throw new Error(errData.error || "Gemini speech generation failed.");
             }
 
-            // 2. Convert the incoming data blob into an executable audio link URL
-            const audioBlob = await response.blob();
-            const audioUrl = URL.createObjectURL(audioBlob);
-            
-            currentAudio = new Audio(audioUrl);
+            // 1. Download response data directly as an arrayBuffer container
+            const arrayBuffer = await response.arrayBuffer();
 
-            // 3. Audio Controls & State Handling
-            currentAudio.oncanplaythrough = () => {
-                speakBtn.disabled = false;
-                currentAudio.play().catch(err => {
-                    console.error("Playback failed:", err);
-                    resetButton();
-                });
-            };
+            // 2. Initialize Browser Web Audio Engine on explicit user gesture
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
 
-            currentAudio.onplay = () => {
+            // 3. Decode Gemini data architecture into raw system sound waves
+            audioContext.decodeAudioData(arrayBuffer, function(audioBufferData) {
+                // Disconnect old audio paths if child clicks twice rapidly
+                if (currentAudioSource) currentAudioSource.disconnect();
+
+                currentAudioSource = audioContext.createBufferSource();
+                currentAudioSource.buffer = audioBufferData;
+                currentAudioSource.connect(audioContext.destination);
+
+                // Tracking playback complete states cleanly
+                currentAudioSource.onended = () => {
+                    // Only reset if this context path is still actively speaking
+                    if (isSpeaking) resetButton();
+                };
+
+                // Trigger audio execution
+                currentAudioSource.start(0);
                 isSpeaking = true;
                 speakBtn.disabled = false;
                 speakBtn.textContent = "⏹️ Stop";
-            };
 
-            currentAudio.onended = () => {
-                resetButton();
-            };
-
-            currentAudio.onerror = () => {
-                console.error("Audio element error occurred.");
-                alert("Playback error. Please try clicking listen again!");
-                resetButton();
-            };
+            }, function(decodeError) {
+                console.error("Decoding audio signature failed:", decodeError);
+                throw new Error("Could not parse the voice data stream format.");
+            });
 
         } catch (err) {
             console.error(err);
-            alert(err.message || "Could not load Gemini voice. Check your Vercel logs.");
+            alert(err.message || "Could not execute audio playback.");
             resetButton();
         }
     });
 
-    // Helper function to cleanly restore button functionality
     function resetButton() {
         isSpeaking = false;
         speakBtn.disabled = false;
         speakBtn.textContent = "🔊 Listen";
     }
 
-    // Stop speaking immediately if the child closes the book view mid-story
     const closeBtn = document.querySelector(".close-btn");
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
-            if (currentAudio) currentAudio.pause();
-            resetButton();
+            stopPlayback();
         });
     }
 })();
