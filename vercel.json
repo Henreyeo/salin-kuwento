@@ -1,0 +1,12 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/voice",
+      "destination": "/api/voice.js"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/public/$1"
+    }
+  ]
+}
