@@ -212,24 +212,22 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     height: auto;
 }
 
-/* Mobile Adjustments */
-@media (max-width: 900px) {
-    .logo-img {
-        width: 85%; /* Shrinks to 85% of the phone's width */
-        max-width: 320px; /* Keeps it from getting too big on large phones */
-    }
+/* DESKTOP: This keeps your logo big and bold */
+.main-logo {
+    display: block;
+    margin: 0 auto;
+    width: 900px;  /* The "Big" size you wanted */
+    max-width: 95%; /* Prevents it from ever being wider than the browser window */
+    height: auto;
+    transition: width 0.3s ease; /* Smooth transition when resizing window */
 }
-    
-/* FLOAT ANIMATION */
-@keyframes float{
-    0%{
-        transform:translateY(0px);
-    }
-    50%{
-        transform:translateY(-10px);
-    }
-    100%{
-        transform:translateY(0px);
+
+/* MOBILE: This shrinks it specifically for phones */
+@media (max-width: 900px) {
+    .main-logo {
+        /* On phones, we ignore the 900px and use a percentage of the screen */
+        width: 85%; 
+        max-width: 350px; /* Limits how big it gets on mobile so it stays readable */
     }
 }
 
