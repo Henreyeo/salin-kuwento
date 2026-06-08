@@ -212,21 +212,21 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     height: auto;
 }
 
-/* DESKTOP VIEW: Keeps the wide banner looking exactly like your screenshot */
+/* DESKTOP VIEW: Makes the banner huge, exactly like your screenshot */
 .main-logo {
     display: block;
     margin: 0 auto;
-    width: 100%;       /* Spans across its layout home */
-    max-width: 960px;  /* Matches the wide desktop layout breakpoint */
-    height: auto;      /* Prevents stretching out of proportion */
-    padding: 0 20px;   /* Safe gutters for smaller laptop screens */
+    width: 100%;        /* Fills the container completely */
+    max-width: 1400px;  /* Bumped way up from 960px so it stretches wide on big screens */
+    height: auto;
+    padding: 0 40px;    /* Generous spacing around the edges */
 }
 
-/* MOBILE VIEW: Keeps the image cleanly shrunk down for phone viewports */
+/* MOBILE VIEW: Keeps it perfectly scaled down for phones */
 @media (max-width: 900px) {
     .main-logo {
-        width: 90%;    /* Fills standard mobile screens nicely with tiny margins */
-        max-width: 450px; /* Caps the scale so it does not get overly tall on larger phones */
+        width: 95%;     /* Hugs the edges nicely on mobile */
+        max-width: 450px; /* Ensures it stays readable on a phone screen */
         padding: 0;
     }
 }
