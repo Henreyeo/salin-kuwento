@@ -212,16 +212,6 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     height: auto;
 }
 
-/* DESKTOP: This keeps your logo big and bold */
-.main-logo {
-    display: block;
-    margin: 0 auto;
-    width: 300px;  /* The "Big" size you wanted */
-    max-width: 900%; /* Prevents it from ever being wider than the browser window */
-    height: auto;
-    transition: width 0.3s ease; /* Smooth transition when resizing window */
-}
-
 /* MOBILE: This shrinks it specifically for phones */
 @media (max-width: 900px) {
     .main-logo {
@@ -485,7 +475,7 @@ button:focus,
 <div class="table">
 
     <h1 class="title">
-        <img src="SalinKuwento.png" alt="Salin Kuwento Logo" class="logo-img">
+        <img src="SalinKuwento.png" alt="Salin Kuwento Logo" style="max-width:900px; width:300%; height:auto;">
     </h1>
 
 
