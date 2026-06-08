@@ -423,39 +423,51 @@ button:focus,
     }
 
     /* 🚨 BOOKSHELF & BOOK IMAGES FIX: Adjusts covers so they don't look huge or overflow on mobile */
-    /* 📱 PERFECTLY BALANCED MOBILE BOOKSHELF */
+  /* 📱 BALANCED & PERFECTLY CENTERED MOBILE BOOKSHELF */
     .bookshelf {
         display: flex;
-        flex-direction: column; /* Stacks books neatly in a center column */
-        align-items: center;    /* Centers every book perfectly */
-        gap: 45px;             /* Even spacing between the books */
-        padding: 0 20px 50px 20px;
+        flex-direction: column; 
+        align-items: center;    /* Keeps everything perfectly aligned in the screen center */
+        gap: 35px;             
+        padding: 0 20px 40px 20px;
         width: 100%;
+        box-sizing: border-box;
     }
 
     .book {
-        /* This makes the book covers wide enough to look balanced on a phone screen */
-        width: 70vw;           
-        max-width: 260px;      /* Caps the size so they don't get massive on large phones */
-        height: auto;          /* Crucial: lets the height calculate naturally */
-        aspect-ratio: 210 / 320; /* Dynamically preserves your exact book cover proportions! */
-        margin: 0 auto;
+        width: 60vw;           /* Slightly narrower so it doesn't feel overwhelming */
+        max-width: 230px;      /* Clamps it perfectly so it looks clean on all phones */
+        height: auto;          
+        aspect-ratio: 210 / 320; /* Dynamically preserves your exact book proportions */
+        margin: 0 auto;        /* Hard center alignment */
+        display: block;
     }
 
-    /* Keeps the image inside filling its parent container nicely */
+    /* 🚨 FORCE THE COVER AND INNER IMAGE TO FIT FLUSH AND CENTERED */
     .book-cover {
-        width: 100%;
-        height: 100%;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 10px;
+        overflow: hidden;
     }
 
-    /* Fixes book text wrapping or clipping issues on mobile */
+    .book-cover img {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: cover;     /* Keeps the image filling the frame cleanly without distortion */
+        display: block;
+    }
+
+    /* Clean, legible, centered title styling */
     .book-title {
-        font-size: 1.1rem;
-        margin-top: 10px;
-        padding: 0 10px;
-        line-height: 1.4;
+        font-size: 1.05rem;
+        text-align: center;
+        margin-top: 12px;
+        color: white;
+        width: 100%;
+        display: block;
     }
-
+    
     .book:hover {
         transform: translateY(-5px) scale(1.02); /* Less dramatic movement for touch screens */
     }
