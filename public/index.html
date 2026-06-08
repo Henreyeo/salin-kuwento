@@ -423,14 +423,37 @@ button:focus,
     }
 
     /* 🚨 BOOKSHELF & BOOK IMAGES FIX: Adjusts covers so they don't look huge or overflow on mobile */
+    /* 📱 PERFECTLY BALANCED MOBILE BOOKSHELF */
     .bookshelf {
-        gap: 25px; /* Brings items closer together on mobile */
-        padding: 0 15px;
+        display: flex;
+        flex-direction: column; /* Stacks books neatly in a center column */
+        align-items: center;    /* Centers every book perfectly */
+        gap: 45px;             /* Even spacing between the books */
+        padding: 0 20px 50px 20px;
+        width: 100%;
     }
 
     .book {
-        width: 145px;   /* Shrinks the width from 210px down to fit phone grids nicely */
-        height: 220px;  /* Shrinks the height proportionally from 320px */
+        /* This makes the book covers wide enough to look balanced on a phone screen */
+        width: 70vw;           
+        max-width: 260px;      /* Caps the size so they don't get massive on large phones */
+        height: auto;          /* Crucial: lets the height calculate naturally */
+        aspect-ratio: 210 / 320; /* Dynamically preserves your exact book cover proportions! */
+        margin: 0 auto;
+    }
+
+    /* Keeps the image inside filling its parent container nicely */
+    .book-cover {
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Fixes book text wrapping or clipping issues on mobile */
+    .book-title {
+        font-size: 1.1rem;
+        margin-top: 10px;
+        padding: 0 10px;
+        line-height: 1.4;
     }
 
     .book:hover {
