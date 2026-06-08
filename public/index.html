@@ -403,34 +403,38 @@ button:focus,
 
 /* --- RESPONSIVE MOBILE OPTIMIZATIONS --- */
 @media(max-width:900px){
-    .title{
+    /* 1. Main Layout & Logo Scale Settings */
+    .title {
         font-size: clamp(1.5rem, 8vw, 2.5rem);
+        padding: 0 15px;
     }
     
-    .subtitle{
+    .main-logo {
+        width: 85%;
+        min-width: 0;
+        max-width: 450px;
+        margin-bottom: 10px;
+    }
+    
+    .subtitle {
         margin-bottom: 40px;
+        padding: 0 20px;
+        font-size: 0.95rem;
     }
 
+    /* 2. Reader Lighbox Container View */
     .reader {
         padding: 10px;
     }
 
-    .open-book{
-        flex-direction:column;
-        height:90vh;
+    .open-book {
+        flex-direction: column;
+        height: 85vh; /* Adjusted from 90vh to prevent address-bar clipping on Safari/Chrome */
         width: 100%;
-        padding-top: 60px; /* Space for action buttons */
+        padding-top: 60px; /* Header control clearance gap */
     }
 
-    /* Show tab selector on mobile */
-    .mobile-tabs {
-        display: flex;
-        position: absolute;
-        top: 60px;
-        left: 0;
-        z-index: 5;
-    }
-
+    /* Sticky Action Header & Tab bar layout adjustments */
     .controls {
         width: 100%;
         top: 0;
@@ -447,29 +451,48 @@ button:focus,
         font-size: 13px;
     }
 
-    /* Page container adjustments to fit mobile screen toggle view */
-    .page{
-        width:100% !important;
-        height: calc(100% - 110px) !important; /* Excludes controls and tabs heights */
+    .mobile-tabs {
+        display: flex;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        z-index: 5;
+    }
+
+    /* 3. Text and Image Fit Control System inside Pages */
+    .page {
+        width: 100% !important;
+        height: calc(100% - 110px) !important; /* Dynamically sizes to fit inside mobile frame */
         position: absolute;
         top: 110px;
         left: 0;
-        padding: 25px;
-        font-size: 1rem;
-        display: none; /* Controlled by tab switching classes */
+        padding: 20px 25px;
+        font-size: 0.95rem; /* Better standard mobile text density scaling */
+        line-height: 1.7;    /* Improved mobile spacing rule over desktop's default 2 */
+        display: none;       /* Controlled via script toggle classes */
+        overflow-x: hidden;  /* Prevents horizontal tracking breaks if words break lines oddly */
+        word-wrap: break-word; /* Forces clipping protection over long structural elements */
     }
 
-    /* Mobile view toggle classes */
+    /* 🚨 CRITICAL FIX: Forces images nested in pages to resize elegantly instead of breaking frames */
+    .page img {
+        max-width: 100% !important;
+        height: auto !important;
+        display: block;
+        margin: 15px auto;
+        border-radius: 6px;
+    }
+
     .left-page.active-mobile-page,
     .right-page.active-mobile-page {
         display: block;
     }
 
-    .left-page{
-        border-right:none;
+    .left-page {
+        border-right: none;
     }
     
-    /* Make tooltip safe for small mobile widths */
+    /* 4. Touch-Safe Absolute Annotations */
     .note {
         position: fixed;
         bottom: 20px;
