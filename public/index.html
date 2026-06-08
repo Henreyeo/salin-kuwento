@@ -379,27 +379,84 @@ button:focus,
 }
 
 
-/* MOBILE */
+/* --- RESPONSIVE MOBILE OPTIMIZATIONS --- */
 @media(max-width:900px){
+    .title{
+        font-size:2.2rem;
+    }
+    
+    .subtitle{
+        margin-bottom: 40px;
+    }
+
+    .reader {
+        padding: 10px;
+    }
 
     .open-book{
         flex-direction:column;
-        height:95vh;
+        height:90vh;
+        width: 100%;
+        padding-top: 60px; /* Space for action buttons */
     }
 
+    /* Show tab selector on mobile */
+    .mobile-tabs {
+        display: flex;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        z-index: 5;
+    }
+
+    .controls {
+        width: 100%;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #5a3825;
+        padding: 10px;
+        justify-content: flex-end;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .controls button {
+        padding: 8px 14px;
+        font-size: 13px;
+    }
+
+    /* Page container adjustments to fit mobile screen toggle view */
     .page{
-        width:100%;
-        height:50%;
+        width:100% !important;
+        height: calc(100% - 110px) !important; /* Excludes controls and tabs heights */
+        position: absolute;
+        top: 110px;
+        left: 0;
+        padding: 25px;
+        font-size: 1rem;
+        display: none; /* Controlled by tab switching classes */
+    }
+
+    /* Mobile view toggle classes */
+    .left-page.active-mobile-page,
+    .right-page.active-mobile-page {
+        display: block;
     }
 
     .left-page{
         border-right:none;
-        border-bottom:2px solid #d4c3a3;
     }
-
-    .title{
-        font-size:2.5rem;
+    
+    /* Make tooltip safe for small mobile widths */
+    .note {
+        position: fixed;
+        bottom: 20px;
+        left: 5%;
+        right: 5%;
+        width: 90%;
+        transform: none;
     }
+}
 
 }
 
