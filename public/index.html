@@ -422,16 +422,31 @@ button:focus,
         font-size: 0.95rem;
     }
 
-    /* 2. Reader Lighbox Container View */
+    /* 🚨 BOOKSHELF & BOOK IMAGES FIX: Adjusts covers so they don't look huge or overflow on mobile */
+    .bookshelf {
+        gap: 25px; /* Brings items closer together on mobile */
+        padding: 0 15px;
+    }
+
+    .book {
+        width: 145px;   /* Shrinks the width from 210px down to fit phone grids nicely */
+        height: 220px;  /* Shrinks the height proportionally from 320px */
+    }
+
+    .book:hover {
+        transform: translateY(-5px) scale(1.02); /* Less dramatic movement for touch screens */
+    }
+
+    /* 2. Reader Lightbox Container View */
     .reader {
         padding: 10px;
     }
 
     .open-book {
         flex-direction: column;
-        height: 85vh; /* Adjusted from 90vh to prevent address-bar clipping on Safari/Chrome */
+        height: 85vh; /* Prevents browser address bar clipping */
         width: 100%;
-        padding-top: 60px; /* Header control clearance gap */
+        padding-top: 60px;
     }
 
     /* Sticky Action Header & Tab bar layout adjustments */
@@ -462,19 +477,19 @@ button:focus,
     /* 3. Text and Image Fit Control System inside Pages */
     .page {
         width: 100% !important;
-        height: calc(100% - 110px) !important; /* Dynamically sizes to fit inside mobile frame */
+        height: calc(100% - 110px) !important; 
         position: absolute;
         top: 110px;
         left: 0;
         padding: 20px 25px;
-        font-size: 0.95rem; /* Better standard mobile text density scaling */
-        line-height: 1.7;    /* Improved mobile spacing rule over desktop's default 2 */
-        display: none;       /* Controlled via script toggle classes */
-        overflow-x: hidden;  /* Prevents horizontal tracking breaks if words break lines oddly */
-        word-wrap: break-word; /* Forces clipping protection over long structural elements */
+        font-size: 0.95rem; 
+        line-height: 1.7;    
+        display: none;       
+        overflow-x: hidden;  
+        word-wrap: break-word; 
     }
 
-    /* 🚨 CRITICAL FIX: Forces images nested in pages to resize elegantly instead of breaking frames */
+    /* 🚨 INNER IMAGES FIX: Forces images nested in pages to contain themselves cleanly */
     .page img {
         max-width: 100% !important;
         height: auto !important;
