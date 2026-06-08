@@ -203,6 +203,23 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     left:140%;
 }
 
+/* Base Style (Desktop) */
+.logo-img {
+    display: block;
+    margin: 0 auto;
+    width: 600px; /* Or whatever size you want on desktop */
+    max-width: 90%; /* Safety net to prevent overflow */
+    height: auto;
+}
+
+/* Mobile Adjustments */
+@media (max-width: 900px) {
+    .logo-img {
+        width: 85%; /* Shrinks to 85% of the phone's width */
+        max-width: 320px; /* Keeps it from getting too big on large phones */
+    }
+}
+    
 /* FLOAT ANIMATION */
 @keyframes float{
     0%{
@@ -469,9 +486,9 @@ button:focus,
 
 <div class="table">
 
-   <h1 class="title">
-    <img src="SalinKuwento.png" alt="Salin Kuwento Logo" style="max-width:900px; width:300%; height:auto;">
-</h1>
+    <h1 class="title">
+        <img src="SalinKuwento.png" alt="Salin Kuwento Logo" class="logo-img">
+    </h1>
 
 
 
