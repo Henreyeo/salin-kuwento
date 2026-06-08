@@ -212,22 +212,29 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     height: auto;
 }
 
-/* DESKTOP VIEW: Makes the banner huge, exactly like your screenshot */
+/* DESKTOP VIEW: Forces the logo to be big and wide across the screen */
 .main-logo {
     display: block;
-    margin: 0 auto;
-    width: 1000%;        /* Fills the container completely */
-    max-width: 1400px;  /* Bumped way up from 960px so it stretches wide on big screens */
+    margin: 0 auto 20px auto;
+    
+    /* Using Viewport Width (vw) forces it to look huge on wide screens */
+    width: 65vw; 
+    
+    /* Sets boundaries so it doesn't get ridiculously massive on giant monitors */
+    min-width: 800px;
+    max-width: 1400px; 
+    
     height: auto;
-    padding: 0 40px;    /* Generous spacing around the edges */
 }
 
-/* MOBILE VIEW: Keeps it perfectly scaled down for phones */
+/* MOBILE VIEW: Keeps it perfectly fitted for small smartphone screens */
 @media (max-width: 900px) {
     .main-logo {
-        width: 95%;     /* Hugs the edges nicely on mobile */
-        max-width: 450px; /* Ensures it stays readable on a phone screen */
-        padding: 0;
+        /* On phones, drop the large min-width and let it fill the screen naturally */
+        width: 85%;
+        min-width: 0;
+        max-width: 450px;
+        margin-bottom: 10px;
     }
 }
 
