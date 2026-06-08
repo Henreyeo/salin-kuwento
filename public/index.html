@@ -231,7 +231,7 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
 @media (max-width: 900px) {
     .main-logo {
         /* On phones, drop the large min-width and let it fill the screen naturally */
-        width: 120%;
+        width: 85%;
         min-width: 0;
         max-width: 450px;
         margin-bottom: 10px;
@@ -513,13 +513,13 @@ button:focus,
     }
 
     .page img {
-        width: 50% !important;       /* Takes up exactly half the width of the page */
-        max-width: 180px !important;  /* Caps it so it never gets too large on big phones */
-        min-width: 120px !important;  /* Stops it from shrinking into a tiny dot on small phones */
-        height: auto !important;      /* Keeps the proportions perfect */
+        width: 100% !important;      /* Lets it dynamically stretch across the text column */
+        max-width: 100% !important;  /* Safety barrier: stops it from expanding past the page margins */
+        min-width: 0 !important;     /* Disables previous micro shrinking limits */
+        height: auto !important;     /* Keeps aspect proportions completely locked and crisp */
         display: block;
-        margin: 12px auto;            /* Centers the PNG neatly with balanced vertical spacing */
-        border-radius: 6px;
+        margin: 20px auto;           /* Generous vertical spacing separating it from text rows */
+        border-radius: 8px;          /* Clean, slightly soft image corners */
         object-fit: contain;
     }
 
