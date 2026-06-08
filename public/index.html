@@ -212,12 +212,22 @@ url('https://mir-s3-cdn-cf.behance.net/project_modules/fs/19fb6e206265431.66c95e
     height: auto;
 }
 
-/* MOBILE: This shrinks it specifically for phones */
+/* DESKTOP VIEW: Keeps the wide banner looking exactly like your screenshot */
+.main-logo {
+    display: block;
+    margin: 0 auto;
+    width: 100%;       /* Spans across its layout home */
+    max-width: 960px;  /* Matches the wide desktop layout breakpoint */
+    height: auto;      /* Prevents stretching out of proportion */
+    padding: 0 20px;   /* Safe gutters for smaller laptop screens */
+}
+
+/* MOBILE VIEW: Keeps the image cleanly shrunk down for phone viewports */
 @media (max-width: 900px) {
     .main-logo {
-        /* On phones, we ignore the 900px and use a percentage of the screen */
-        width: 85%; 
-        max-width: 350px; /* Limits how big it gets on mobile so it stays readable */
+        width: 90%;    /* Fills standard mobile screens nicely with tiny margins */
+        max-width: 450px; /* Caps the scale so it does not get overly tall on larger phones */
+        padding: 0;
     }
 }
 
@@ -474,11 +484,9 @@ button:focus,
 
 <div class="table">
 
-    <h1 class="title">
-        <img src="SalinKuwento.png" alt="Salin Kuwento Logo" style="max-width:900px; width:300%; height:auto;">
-    </h1>
-
-
+<h1 class="title">
+    <img src="SalinKuwento.png" alt="Salin Kuwento Logo" class="main-logo">
+</h1>
 
     <p class="subtitle">
         An Interactive Library of Translated Short Stories from the Global South and Global North.
