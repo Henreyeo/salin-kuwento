@@ -1362,29 +1362,19 @@ showOriginal();
 <script>
 (function () {
 
-    const synthesis = window.speechSynthesis;
-    let utterance = null;
+    // 🎵 Audio elements setup
+    let currentAudio = null;
     let isSpeaking = false;
 
     const speakBtn = document.getElementById("speakBtn");
     if (!speakBtn) return;
 
-    function extractText(element) {
-        if (!element) return "";
-        const clone = element.cloneNode(true);
-
-        clone.querySelectorAll("img").forEach(el => el.remove());
-        clone.querySelectorAll(".note").forEach(el => el.remove());
-
-        return clone.innerText || clone.textContent || "";
-    }
-
-    function getCurrentStoryText() {
-
+    // Detects which page is currently viewable or active
+    function isOriginalActive() {
         const originalPage = document.getElementById("originalPage");
         const translatedPage = document.getElementById("translatedPage");
 
-        if (!originalPage || !translatedPage) return "";
+        if (!originalPage || !translatedPage) return true; // Default fallback
 
         const originalVisible =
             originalPage.offsetParent !== null &&
@@ -1394,144 +1384,74 @@ showOriginal();
             translatedPage.offsetParent !== null &&
             getComputedStyle(translatedPage).display !== "none";
 
-        if (translatedVisible && !originalVisible)
-            return extractText(translatedPage);
-
-        if (originalVisible && !translatedVisible)
-            return extractText(originalPage);
+        if (translatedVisible && !originalVisible) return false;
+        if (originalVisible && !translatedVisible) return true;
 
         const isTranslatedActive =
             translatedPage.classList.contains("active") ||
             translatedPage.classList.contains("show") ||
             translatedPage.classList.contains("visible");
 
-        return isTranslatedActive
-            ? extractText(translatedPage)
-            : extractText(originalPage);
+        return !isTranslatedActive;
     }
 
-    // 🎧 Get BEST available FEMALE voice (Chrome/Edge safe)
-    function getBestFemaleVoice(voices, langHint) {
-
-        const femaleKeywords = [
-            "female", "zira", "aria", "jenny", "samantha",
-            "google uk english female",
-            "google us english female",
-            "hazel"
-        ];
-
-        // 1. Strong match (female + correct language)
-        let voice = voices.find(v =>
-            v.lang.toLowerCase().includes(langHint) &&
-            femaleKeywords.some(k => v.name.toLowerCase().includes(k))
-        );
-
-        // 2. Any female voice in correct language
-        if (!voice) {
-            voice = voices.find(v =>
-                v.lang.toLowerCase().includes(langHint) &&
-                femaleKeywords.some(k => v.name.toLowerCase().includes(k))
-            );
-        }
-
-        // 3. Any female voice at all
-        if (!voice) {
-            voice = voices.find(v =>
-                femaleKeywords.some(k => v.name.toLowerCase().includes(k))
-            );
-        }
-
-        // 4. Fallback to any voice in language
-        if (!voice) {
-            voice = voices.find(v =>
-                v.lang.toLowerCase().includes(langHint)
-            );
-        }
-
-        return voice;
+    // Standard function to clean up and reset UI when audio stops
+    function resetUI() {
+        isSpeaking = false;
+        speakBtn.textContent = "🔊 Listen";
+        currentAudio = null;
     }
 
     speakBtn.addEventListener("click", function () {
 
-        if (isSpeaking) {
-            synthesis.cancel();
-            speakBtn.textContent = "🔊 Listen";
-            isSpeaking = false;
+        // If audio is already playing, stop it
+        if (isSpeaking && currentAudio) {
+            currentAudio.pause();
+            currentAudio.currentTime = 0; // Reset track to beginning
+            resetUI();
             return;
         }
 
-        const fullText = getCurrentStoryText().trim();
+        // Determine which file to play based on active page
+        const audioFile = isOriginalActive() 
+            ? "Butterflies_Original.mp3" 
+            : "Mga Paru-paro_Salin.mp3";
 
-        if (!fullText) {
-            alert("No story text found.");
-            return;
-        }
+        // Create new Audio instance
+        currentAudio = new Audio(audioFile);
 
-        utterance = new SpeechSynthesisUtterance(fullText);
-
-        utterance.rate = 0.92;
-        utterance.pitch = 1.0;
-        utterance.volume = 1.0;
-
-        const tagalogKeywords = [
-            "ang","mga","ng","sa","ni","kuwento",
-            "bata","relo","buhok","salin","jim","della"
-        ];
-
-        const words = fullText.toLowerCase().split(/\W+/);
-        const isTagalog = words.some(w => tagalogKeywords.includes(w));
-
-        const voices = synthesis.getVoices();
-
-        if (isTagalog) {
-            utterance.lang = "fil-PH";
-
-            const voice = getBestFemaleVoice(voices, "fil") ||
-                          getBestFemaleVoice(voices, "tl");
-
-            if (voice) utterance.voice = voice;
-
-        } else {
-            utterance.lang = "en-US";
-
-            const voice = getBestFemaleVoice(voices, "en");
-
-            if (voice) utterance.voice = voice;
-        }
-
-        utterance.onstart = () => {
+        // UI Updates based on audio events
+        currentAudio.onplay = () => {
             isSpeaking = true;
             speakBtn.textContent = "⏹️ Stop";
         };
 
-        utterance.onend = () => {
-            isSpeaking = false;
-            speakBtn.textContent = "🔊 Listen";
+        currentAudio.onended = () => {
+            resetUI();
         };
 
-        utterance.onerror = () => {
-            isSpeaking = false;
-            speakBtn.textContent = "🔊 Listen";
+        currentAudio.onerror = () => {
+            alert("Error: Could not load or play the audio file.");
+            resetUI();
         };
 
-        synthesis.cancel();
-        synthesis.speak(utterance);
+        // Play the track
+        currentAudio.play().catch(error => {
+            console.error("Audio play failed:", error);
+            resetUI();
+        });
     });
 
+    // Close button logic to stop background audio
     const closeBtn = document.querySelector(".close-btn");
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
-            synthesis.cancel();
-            isSpeaking = false;
-            speakBtn.textContent = "🔊 Listen";
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            resetUI();
         });
-    }
-
-    // Load voices properly (Chrome fix)
-    if (speechSynthesis.onvoiceschanged !== undefined) {
-        speechSynthesis.onvoiceschanged = () => {
-            synthesis.getVoices();
-        };
     }
 
 })();
