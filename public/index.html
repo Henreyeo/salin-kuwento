@@ -489,13 +489,15 @@ button:focus,
         word-wrap: break-word; 
     }
 
-    /* 🚨 INNER IMAGES FIX: Forces images nested in pages to contain themselves cleanly */
     .page img {
-        max-width: 100% !important;
-        height: auto !important;
+        width: 50% !important;       /* Takes up exactly half the width of the page */
+        max-width: 180px !important;  /* Caps it so it never gets too large on big phones */
+        min-width: 120px !important;  /* Stops it from shrinking into a tiny dot on small phones */
+        height: auto !important;      /* Keeps the proportions perfect */
         display: block;
-        margin: 15px auto;
+        margin: 12px auto;            /* Centers the PNG neatly with balanced vertical spacing */
         border-radius: 6px;
+        object-fit: contain;
     }
 
     .left-page.active-mobile-page,
