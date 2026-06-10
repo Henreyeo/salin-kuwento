@@ -1787,10 +1787,26 @@ showOriginal();
             return;
         }
 
-        // Determine which file to play based on active page
-        const audioFile = isOriginalActive() 
-            ? "Butterflies_Original.mp3" 
-            : "Mga Paru-paro_Salin.mp3";
+        // 🔍 Check which story is currently loaded in the reader
+        const originalPage = document.getElementById("originalPage");
+        const headingText = originalPage ? originalPage.querySelector("h2").textContent.toLowerCase() : "";
+        
+        // Check if the current story is "The Gift of the Magi"
+        const isGiftOfMagi = headingText.includes("gift") || headingText.includes("magi");
+
+        let audioFile = "";
+
+        if (isGiftOfMagi) {
+            // Audio files for The Gift of the Magi
+            audioFile = isOriginalActive() 
+                ? "TheGiftofTheMagi.mp3" 
+                : "Mago.mp3";
+        } else {
+            // Fallback to your original butterfly audio tracks
+            audioFile = isOriginalActive() 
+                ? "Butterflies_Original.mp3" 
+                : "Mga Paru-paro_Salin.mp3";
+        }
 
         // Create new Audio instance
         currentAudio = new Audio(audioFile);
@@ -1806,7 +1822,7 @@ showOriginal();
         };
 
         currentAudio.onerror = () => {
-            alert("Error: Could not load or play the audio file.");
+            alert("Error: Could not load or play the audio file (" + audioFile + ").");
             resetUI();
         };
 
