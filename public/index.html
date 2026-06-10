@@ -1744,33 +1744,22 @@ showOriginal();
     const speakBtn = document.getElementById("speakBtn");
     if (!speakBtn) return;
 
-    // Detects which page is currently viewable or active
+    // Detects whether the user is looking at the original text or translation tab
     function isOriginalActive() {
         const originalPage = document.getElementById("originalPage");
         const translatedPage = document.getElementById("translatedPage");
 
-        if (!originalPage || !translatedPage) return true; // Default fallback
+        if (!originalPage || !translatedPage) return true;
 
-        const originalVisible =
-            originalPage.offsetParent !== null &&
-            getComputedStyle(originalPage).display !== "none";
-
-        const translatedVisible =
-            translatedPage.offsetParent !== null &&
-            getComputedStyle(translatedPage).display !== "none";
+        const originalVisible = originalPage.offsetParent !== null && getComputedStyle(originalPage).display !== "none";
+        const translatedVisible = translatedPage.offsetParent !== null && getComputedStyle(translatedPage).display !== "none";
 
         if (translatedVisible && !originalVisible) return false;
         if (originalVisible && !translatedVisible) return true;
 
-        const isTranslatedActive =
-            translatedPage.classList.contains("active") ||
-            translatedPage.classList.contains("show") ||
-            translatedPage.classList.contains("visible");
-
-        return !isTranslatedActive;
+        return !translatedPage.classList.contains("active-mobile-page");
     }
 
-    // Standard function to clean up and reset UI when audio stops
     function resetUI() {
         isSpeaking = false;
         speakBtn.textContent = "🔊 Listen";
@@ -1779,39 +1768,46 @@ showOriginal();
 
     speakBtn.addEventListener("click", function () {
 
-        // If audio is already playing, stop it
+        // If audio is already playing, turn it off cleanly
         if (isSpeaking && currentAudio) {
             currentAudio.pause();
-            currentAudio.currentTime = 0; // Reset track to beginning
+            currentAudio.currentTime = 0;
             resetUI();
             return;
         }
 
-        // 🔍 Check which story is currently loaded in the reader
+        // 🔍 SCAN THE ENTIRE WRAPPER FOR THE STORY TITLE
+        let completePageText = "";
         const originalPage = document.getElementById("originalPage");
-        const headingText = originalPage ? originalPage.querySelector("h2").textContent.toLowerCase() : "";
         
-        // Check if the current story is "The Gift of the Magi"
-        const isGiftOfMagi = headingText.includes("gift") || headingText.includes("magi");
+        if (originalPage) {
+            // Checks headers (h1, h2) as well as all inner text contents
+            completePageText = originalPage.innerText.toLowerCase();
+        }
+
+        // Fallback: search the entire browser screen if page wrappers are built differently
+        if (!completePageText) {
+            completePageText = document.body.innerText.toLowerCase();
+        }
+        
+        // Match conditions for "The Gift of the Magi"
+        const isGiftOfMagi = completePageText.includes("gift") || 
+                             completePageText.includes("magi") || 
+                             completePageText.includes("mago");
 
         let audioFile = "";
 
         if (isGiftOfMagi) {
-            // Audio files for The Gift of the Magi
-            audioFile = isOriginalActive() 
-                ? "TheGiftofTheMagi.mp3" 
-                : "Mago.mp3";
+            audioFile = isOriginalActive() ? "TheGiftofTheMagi.mp3" : "Mago.mp3";
         } else {
-            // Fallback to your original butterfly audio tracks
-            audioFile = isOriginalActive() 
-                ? "Butterflies_Original.mp3" 
-                : "Mga Paru-paro_Salin.mp3";
+            audioFile = isOriginalActive() ? "Butterflies_Original.mp3" : "Mga Paru-paro_Salin.mp3";
         }
 
-        // Create new Audio instance
+        console.log("System Selected Audio File ->", audioFile);
+
+        // Load and play audio tracks
         currentAudio = new Audio(audioFile);
 
-        // UI Updates based on audio events
         currentAudio.onplay = () => {
             isSpeaking = true;
             speakBtn.textContent = "⏹️ Stop";
@@ -1822,19 +1818,18 @@ showOriginal();
         };
 
         currentAudio.onerror = () => {
-            alert("Error: Could not load or play the audio file (" + audioFile + ").");
+            alert("Audio could not load. Please double check that your file name matches exactly: " + audioFile);
             resetUI();
         };
 
-        // Play the track
         currentAudio.play().catch(error => {
-            console.error("Audio play failed:", error);
+            console.error("Playback restriction triggered:", error);
             resetUI();
         });
     });
 
-    // Close button logic to stop background audio
-    const closeBtn = document.querySelector(".close-btn");
+    // Handle close modal operations safely
+    const closeBtn = document.querySelector(".close-btn") || document.getElementById("closeBtn");
     if (closeBtn) {
         closeBtn.addEventListener("click", () => {
             if (currentAudio) {
