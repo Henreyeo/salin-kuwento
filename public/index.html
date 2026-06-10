@@ -1776,28 +1776,35 @@ showOriginal();
             return;
         }
 
-        // 🔍 SCAN THE ENTIRE WRAPPER FOR THE STORY TITLE
+        // 🔍 SCAN ACTIVE HEADINGS FOR THE STORY TITLE
         let completePageText = "";
         const originalPage = document.getElementById("originalPage");
+        const translatedPage = document.getElementById("translatedPage");
         
-        if (originalPage) {
-            // Checks headers (h1, h2) as well as all inner text contents
-            completePageText = originalPage.innerText.toLowerCase();
-        }
+        if (originalPage) completePageText += " " + originalPage.innerText.toLowerCase();
+        if (translatedPage) completePageText += " " + translatedPage.innerText.toLowerCase();
 
-        // Fallback: search the entire browser screen if page wrappers are built differently
-        if (!completePageText) {
+        // Fallback: check whole body if page structural wrappers differ
+        if (!completePageText.trim()) {
             completePageText = document.body.innerText.toLowerCase();
         }
         
-        // Match conditions for "The Gift of the Magi"
+        // Match conditions for your stories
+        const isProjectOverview = completePageText.includes("project overview") || 
+                                  completePageText.includes("project") || 
+                                  completePageText.includes("overview");
+
         const isGiftOfMagi = completePageText.includes("gift") || 
                              completePageText.includes("magi") || 
                              completePageText.includes("mago");
 
         let audioFile = "";
 
-        if (isGiftOfMagi) {
+        // 🔀 File Selection Matrix
+        if (isProjectOverview) {
+            // 🌟 Plays sparkle.mp3 on BOTH original and salin views
+            audioFile = "sparkle.mp3";
+        } else if (isGiftOfMagi) {
             audioFile = isOriginalActive() ? "TheGiftofTheMagi.mp3" : "Mago.mp3";
         } else {
             audioFile = isOriginalActive() ? "Butterflies_Original.mp3" : "Mga Paru-paro_Salin.mp3";
